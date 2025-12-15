@@ -10,7 +10,8 @@ interface TeacherLoginPageProps {
 export const TeacherLoginPage: React.FC<TeacherLoginPageProps> = ({ onLoginSuccess, onBackToStudent }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [subject, setSubject] = useState(SUBJECTS[0]);
+  // Explicitly type as string to avoid literal type inference issues
+  const [subject, setSubject] = useState<string>(SUBJECTS[0]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {

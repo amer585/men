@@ -69,6 +69,30 @@
       .dark ::-webkit-scrollbar-thumb:hover {
         background: #475569;
       }
+      
+      /* Loading Spinner Styles */
+      .initial-loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+        background-color: #f8fafc;
+      }
+      .dark .initial-loader {
+        background-color: #0f172a;
+      }
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(30, 136, 229, 0.3);
+        border-radius: 50%;
+        border-top-color: #1e88e5;
+        animation: spin 1s ease-in-out infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
     </style>
   <script type="importmap">
 {
@@ -83,6 +107,11 @@
 </script>
 </head>
   <body class="transition-colors duration-300">
-    <div id="root"></div>
+    <div id="root">
+      <div class="initial-loader">
+        <div class="spinner"></div>
+      </div>
+    </div>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
