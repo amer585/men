@@ -94,15 +94,13 @@ exports.handler = async (event) => {
     const pool = getPool(dbUrl);
     connection = await pool.getConnection();
 
-    // ── RU-OPTIMIZED QUERY ──
-    // Only SELECT the exact columns needed — never SELECT *
-    // LIMIT 1 ensures the query stops after finding the first match
-    // ssn_encrypted should be indexed (PRIMARY KEY or UNIQUE)
+    // ── TTiDB SERVERLESS OPTIMIZATION ──
+    // -- POINT GET: PK lookup
+    // This query bypasses the optimizer and fetches exactly 1 row instantly.
     const [rows] = await connection.execute(
       `SELECT student_name_ar, school_name, class_name, admin_zone, gov_code, gender
        FROM students
-       WHERE ssn_encrypted = ?
-       LIMIT 1`,
+       WHERE ssn_encrypted = ?`,
       [String(ssn_encrypted)]
     );
 
