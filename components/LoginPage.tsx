@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { CreditCard, ArrowRight, Loader2, UserCog, ArrowLeft, GraduationCap, AlertCircle, User, MapPin, Building, School } from 'lucide-react';
 // Grade level mapping: numeric → Arabic display name
 const GRADE_OPTIONS = [
   { value: 1, label: 'الأول الابتدائي' },
