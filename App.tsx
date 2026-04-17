@@ -7,9 +7,9 @@ import { StudentDashboard } from './components/StudentDashboard';
 import { CheckCircle2, X } from 'lucide-react';
 
 // ── BACKEND URL ──
-// After deploying INTLAQA_backend to Netlify, paste your site URL here.
-// Example: 'https://intlaqa-api.netlify.app/.netlify/functions'
-const BACKEND_URL = 'https://madrastna-backend.netlify.app/.netlify/functions';
+// Gigalixir Persistent Node.js Server
+// Example: 'https://madrastna-backend.gigalixirapp.com/api'
+const BACKEND_URL = 'https://madrastna-backend.gigalixirapp.com/api';
 
 // --- CONSTANTS ---
 export const SUBJECTS = [
