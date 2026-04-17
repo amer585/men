@@ -28,9 +28,14 @@ interface LoginPageProps {
     grade_level: number;
     student_name_ar: string;
     school_name: string;
-    onBack?: () => void;
-    backendUrl: string;
-  }
+    class_name: string;
+    admin_zone: string;
+    gov_code: string;
+    gender: string;
+  }) => void;
+  onBack?: () => void;
+  backendUrl: string;
+}
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onBack, backendUrl }) => {
       const [isRegistering, setIsRegistering] = useState(false);
