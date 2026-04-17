@@ -117,10 +117,29 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ student, onL
                 </div>
                 
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-black text-slate-800 dark:text-white tracking-tight leading-tight mb-2">{student.name}</h1>
-                    <div className="flex flex-wrap items-center gap-3">
-                        <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-xs font-bold border border-slate-200 dark:border-slate-700">{student.grade}</span>
-                        <span className="px-3 py-1 bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 rounded-full text-xs font-mono border border-slate-200 dark:border-slate-800 shadow-sm">ID: {student.id}</span>
+                    <h1 className="text-3xl md:text-4xl font-black text-slate-800 dark:text-white tracking-tight leading-tight mb-2">
+                      {student.name}
+                    </h1>
+                    
+                    {/* Full Demographic Badges */}
+                    <div className="flex flex-wrap items-center gap-2 mt-3">
+                        <span className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full text-xs font-bold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 shadow-sm">
+                            <span className="text-blue-500">•</span>
+                            {student.school_name || 'المدرسة غير مسجلة'}
+                        </span>
+                        <span className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full text-xs font-bold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 shadow-sm">
+                            <span className="text-emerald-500">•</span>
+                            {student.class_name ? `فصل ${student.class_name}` : 'الفصل غير مسجل'}
+                        </span>
+                        {student.admin_zone && (
+                          <span className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full text-xs font-bold border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 shadow-sm">
+                              <span className="text-orange-500">•</span>
+                              إدارة {student.admin_zone}
+                          </span>
+                        )}
+                        <span className="px-3 py-1.5 bg-white dark:bg-slate-900 text-slate-400 dark:text-slate-500 rounded-full text-[10px] font-mono border border-slate-200 dark:border-slate-800 shadow-sm ml-auto">
+                           الرقم القومي: {student.id}
+                        </span>
                     </div>
                 </div>
             </div>

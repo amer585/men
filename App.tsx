@@ -77,6 +77,11 @@ export interface StudentData {
   id: string;
   name: string;
   grade: string;
+  class_name?: string;
+  school_name?: string;
+  admin_zone?: string;
+  gov_code?: string;
+  gender?: string;
   weeklyAssessments: Assessment[];
   monthlyExams: MonthlyExam[];
   attendanceRecords: AttendanceRecord[];
@@ -319,7 +324,12 @@ export default function App() {
       // Update existing student with fresh backend data
       handleUpdateStudent(id, {
         name: backendStudent.student_name_ar || exists.name,
-        grade: backendStudent.class_name || exists.grade,
+        grade: `مرحلة ${backendStudent.grade_level}`,
+        class_name: backendStudent.class_name,
+        school_name: backendStudent.school_name,
+        admin_zone: backendStudent.admin_zone,
+        gov_code: backendStudent.gov_code,
+        gender: backendStudent.gender,
       });
       setCurrentStudentId(id);
       triggerToast(`مرحباً بك، ${backendStudent.student_name_ar}!`, 'info');
@@ -327,7 +337,12 @@ export default function App() {
       const newStudent: StudentData = {
         id: id,
         name: backendStudent.student_name_ar || 'طالب',
-        grade: backendStudent.class_name || `الصف ${backendStudent.grade_level}`,
+        grade: `مرحلة ${backendStudent.grade_level}`,
+        class_name: backendStudent.class_name,
+        school_name: backendStudent.school_name,
+        admin_zone: backendStudent.admin_zone,
+        gov_code: backendStudent.gov_code,
+        gender: backendStudent.gender,
         weeklyAssessments: [],
         monthlyExams: [],
         attendanceRecords: [],
