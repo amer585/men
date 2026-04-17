@@ -8,7 +8,7 @@ import { CheckCircle2, X } from 'lucide-react';
 
 // ── BACKEND URL ──
 // Back4App Container
-const BACKEND_URL = '/api';
+const BACKEND_URL = 'https://back-p6phab2w.b4a.run/api';
 
 // --- CONSTANTS ---
 export const SUBJECTS = [
