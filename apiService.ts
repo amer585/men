@@ -1,12 +1,11 @@
 // ─────────────────────────────────────────────────────────
-// INTLAQA API Service — Production (Netlify)
+// INTLAQA API Service — Production (Gigalixir)
 // ─────────────────────────────────────────────────────────
-// After deploying INTLAQA_backend to Netlify, set your URL below.
+// Express backend deployed on Gigalixir.
 // All requests use ssn_encrypted as primary key + grade_level for routing.
 // ─────────────────────────────────────────────────────────
 
-const BACKEND_SITE = 'https://YOUR-NETLIFY-BACKEND.netlify.app';
-const BASE_URL = `${BACKEND_SITE}/.netlify/functions`;
+const BASE_URL = 'https://madrastna-backend.gigalixirapp.com/api';
 
 // --- Types ---
 export interface AddStudentPayload {

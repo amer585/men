@@ -7,8 +7,8 @@ import { StudentDashboard } from './components/StudentDashboard';
 import { CheckCircle2, X } from 'lucide-react';
 
 // ── BACKEND URL ──
-// Back4App Container
-const BACKEND_URL = '/api';
+// Gigalixir Express backend
+const BACKEND_URL = 'https://madrastna-backend.gigalixirapp.com/api';
 
 // --- CONSTANTS ---
 export const SUBJECTS = [

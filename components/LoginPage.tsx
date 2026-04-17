@@ -53,7 +53,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onBack, ba
       const [isLoading, setIsLoading] = useState(false);
       const [error, setError] = useState<string | null>(null);
 
-      // Auto-retry fetch to handle Back4App cold starts
+      // Auto-retry fetch to handle backend cold starts (Gigalixir free tier sleep)
       const fetchWithRetry = async (url: string, options: RequestInit, retries = 3): Promise<Response> => {
         const delays = [3000, 5000, 8000];
         for (let i = 0; i < retries; i++) {
