@@ -29,17 +29,11 @@ interface LoginPageProps {
     grade_level: number;
     student_name_ar: string;
     school_name: string;
-    class_name: string;
-    admin_zone: string;
-    gov_code: string;
-    gender: string;
-  }) => void;
-  onTeacherLoginClick: () => void;
   onBack?: () => void;
   backendUrl: string;
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onTeacherLoginClick, onBack, backendUrl }) => {
+export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onBack, backendUrl }) => {
   const [isRegistering, setIsRegistering] = useState(false);
   
   // States
@@ -54,6 +48,27 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onTeacherL
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Auto-retry fetch to handle Back4App cold starts
+  const fetchWithRetry = async (url: string, options: RequestInit, retries = 3): Promise<Response> => {
+    const delays = [3000, 5000, 8000];
+    for (let i = 0; i < retries; i++) {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
+        const res = await fetch(url, { ...options, signal: controller.signal });
+        clearTimeout(timeout);
+        return res;
+      } catch (err) {
+        if (i < retries - 1) {
+          await new Promise(r => setTimeout(r, delays[i]));
+        } else {
+          throw err;
+        }
+      }
+    }
+    throw new Error('All retries failed');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,14 +90,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onTeacherL
     try {
       if (isRegistering) {
         // --- REGISTRATION FLOW ---
-        const res = await fetch(`${backendUrl}/addStudent`, {
+        const res = await fetchWithRetry(`${backendUrl}/addStudent`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ssn_encrypted: nationalId,
             student_name_ar: studentName,
             gender: gender,
-            gov_code: governorate, // Using name as code for UI simplicity
+            gov_code: governorate,
             admin_zone: adminZone,
             school_name: schoolName,
             grade_level: gradeLevel,
@@ -91,7 +106,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onTeacherL
         });
         
         if (res.ok) {
-           // On successful registration, pass data directly to dashboard
            const studentData = {
               ssn_encrypted: nationalId,
               grade_level: gradeLevel,
@@ -110,7 +124,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onTeacherL
         }
       } else {
         // --- LOGIN FLOW ---
-        const res = await fetch(`${backendUrl}/studentLogin`, {
+        const res = await fetchWithRetry(`${backendUrl}/studentLogin`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -303,15 +317,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onTeacherL
                 className="text-sm font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 transition-colors"
             >
                 {isRegistering ? 'لديك حساب بالفعل؟ سجل دخول' : 'ليس لديك حساب؟ إنشاء طالب جديد'}
-            </button>
-            
-            <button 
-                type="button"
-                onClick={onTeacherLoginClick}
-                className="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-colors text-xs font-bold"
-            >
-                <UserCog className="w-4 h-4" />
-                <span>دخول الإدارة والمعلمين</span>
             </button>
         </div>
 
