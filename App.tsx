@@ -7,9 +7,8 @@ import { StudentDashboard } from './components/StudentDashboard';
 import { CheckCircle2, X } from 'lucide-react';
 
 // ── BACKEND URL ──
-// Gigalixir Persistent Node.js Server
-// Example: 'https://madrastna-backend.gigalixirapp.com/api'
-const BACKEND_URL = 'https://madrastna-backend.gigalixirapp.com/api';
+// Back4App Container
+const BACKEND_URL = 'https://back-p6phab2w.b4a.run/api';
 
 // --- CONSTANTS ---
 export const SUBJECTS = [
