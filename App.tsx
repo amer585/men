@@ -9,7 +9,7 @@ import { CheckCircle2, X } from 'lucide-react';
 // ── BACKEND URL ──
 // After deploying INTLAQA_backend to Netlify, paste your site URL here.
 // Example: 'https://intlaqa-api.netlify.app/.netlify/functions'
-const BACKEND_URL = 'https://YOUR-NETLIFY-BACKEND.netlify.app/.netlify/functions';
+const BACKEND_URL = 'https://madrastna-backend.netlify.app/.netlify/functions';
 
 // --- CONSTANTS ---
 export const SUBJECTS = [
