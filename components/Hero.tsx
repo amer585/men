@@ -1,7 +1,6 @@
 import React from 'react';
 import { CalendarClock, GraduationCap, LayoutGrid, ShieldCheck } from 'lucide-react';
 import { Illustration } from './Illustration';
-import { PREP_GRADE_LABELS, SHOWCASE_SUBJECTS } from '../schoolData';
 
 interface HeroProps {
   onLogin: () => void;
@@ -26,8 +25,6 @@ const serviceCards = [
 ];
 
 export const Hero: React.FC<HeroProps> = ({ onLogin }) => {
-  const highlightedSubjects = SHOWCASE_SUBJECTS.slice(0, 8);
-
   return (
     <div className="space-y-8 py-6 lg:py-10 animate-in fade-in duration-700">
       <div className="grid items-start gap-8 lg:grid-cols-[1.08fr_.92fr] lg:gap-10">
@@ -60,39 +57,7 @@ export const Hero: React.FC<HeroProps> = ({ onLogin }) => {
               الدخول إلى بيانات الطالب
             </button>
             <div className="rounded-2xl border border-slate-200 bg-white/80 px-5 py-3 text-sm font-medium text-slate-600 shadow-sm backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-300">
-              الصفوف المدعومة: {PREP_GRADE_LABELS.join(' • ')}
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/80">
-              <div className="text-xs font-bold text-slate-400 dark:text-slate-500">المواد المعروضة</div>
-              <div className="mt-2 text-3xl font-black text-slate-900 dark:text-white">{SHOWCASE_SUBJECTS.length}</div>
-              <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">مواد أساسية وأنشطة معتمدة</div>
-            </div>
-            <div className="rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/80">
-              <div className="text-xs font-bold text-slate-400 dark:text-slate-500">أيام الحضور</div>
-              <div className="mt-2 text-3xl font-black text-slate-900 dark:text-white">30</div>
-              <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">آخر 30 يوم دراسي بالتفصيل</div>
-            </div>
-            <div className="rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/80">
-              <div className="text-xs font-bold text-slate-400 dark:text-slate-500">الإشعارات</div>
-              <div className="mt-2 text-3xl font-black text-slate-900 dark:text-white">حيّة</div>
-              <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">تنبيهات المدرسة والمبادرات الرقمية</div>
-            </div>
-          </div>
-
-          <div className="rounded-[2rem] border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/80">
-            <div className="mb-3 text-sm font-bold text-slate-700 dark:text-slate-200">المواد الفعلية المعروضة داخل المنصة</div>
-            <div className="flex flex-wrap justify-end gap-2">
-              {highlightedSubjects.map((subject) => (
-                <span
-                  key={subject}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                >
-                  {subject}
-                </span>
-              ))}
+              تسجيل بالرقم القومي والمرحلة الدراسية للوصول إلى التفاصيل الكاملة
             </div>
           </div>
         </div>

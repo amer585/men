@@ -21,7 +21,6 @@ import {
   Sparkles,
   Trophy,
   TrendingUp,
-  UserSquare2,
 } from 'lucide-react';
 import type { AttendanceRecord, MonthlyExam, StudentData } from '../App';
 import { SUBJECTS } from '../App';
@@ -486,15 +485,16 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ student, onL
                         </div>
                         <div className="space-y-3">
                           {summary.weeklyAssessments.map((assessment) => (
-                            <ScoreRow
-                              key={assessment.id}
-                              title={assessment.title}
-                              date={assessment.date}
-                              score={assessment.score}
-                              maxScore={assessment.maxScore}
-                              status={assessment.status}
-                              note={assessment.note}
-                            />
+                            <div key={assessment.id}>
+                              <ScoreRow
+                                title={assessment.title}
+                                date={assessment.date}
+                                score={assessment.score}
+                                maxScore={assessment.maxScore}
+                                status={assessment.status}
+                                note={assessment.note}
+                              />
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -506,15 +506,16 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ student, onL
                         </div>
                         <div className="space-y-3">
                           {summary.monthlyExams.map((exam) => (
-                            <ScoreRow
-                              key={exam.id}
-                              title={exam.title || 'امتحان شهري'}
-                              date={exam.date}
-                              score={exam.score}
-                              maxScore={exam.maxScore}
-                              status={exam.status}
-                              note={exam.note}
-                            />
+                            <div key={exam.id}>
+                              <ScoreRow
+                                title={exam.title || 'امتحان شهري'}
+                                date={exam.date}
+                                score={exam.score}
+                                maxScore={exam.maxScore}
+                                status={exam.status}
+                                note={exam.note}
+                              />
+                            </div>
                           ))}
                         </div>
                       </div>
