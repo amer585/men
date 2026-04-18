@@ -2,11 +2,20 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# 🏫 Madrasatuna Student Portal
 
-This contains everything you need to run your app locally.
+Modern, responsive student portal for the Egyptian curriculum. Built with React, Vite, and Tailwind CSS.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1BQpRiLNkdTBmjX_PINJdZ6D1fR19hsfq
+### 🌐 Project Overview
+This portal provides students with access to their weekly assessments, monthly exams, attendance records, and academic schedules.
+
+### 🔑 Features
+- **Dynamic Dashboard**: Personalized student data visualization.
+- **Academic Tracking**: View scores for Arabic, Math, English, and more.
+- **Schedule Management**: Class schedules and school announcements.
+- **Modern UI**: Dark/Light mode support with premium aesthetics.
+
+### 🛠️ Local Development
 
 ## Run Locally
 
