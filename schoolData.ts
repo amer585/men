@@ -409,14 +409,19 @@ export const buildStudentData = (profile: Partial<StudentData> & { id: string })
   } satisfies StudentData;
 };
 
-export const normalizeStudentData = (student: StudentData) => {
+export const normalizeStudentData = (student: Partial<StudentData> & Pick<StudentData, 'id'>) => {
+  const weeklyAssessments = student.weeklyAssessments ?? [];
+  const monthlyExams = student.monthlyExams ?? [];
+  const attendanceRecords = student.attendanceRecords ?? [];
+  const schedule = student.schedule ?? [];
+  const announcements = student.announcements ?? [];
   const hasFullDashboard =
     student.dataVersion === CURRENT_DATA_VERSION &&
-    student.weeklyAssessments.length >= SHOWCASE_SUBJECTS.length * 6 &&
-    student.monthlyExams.length >= SHOWCASE_SUBJECTS.length * 2 &&
-    student.attendanceRecords.length >= 30 &&
-    student.schedule.length === 5 &&
-    student.announcements.length >= 4;
+    weeklyAssessments.length >= SHOWCASE_SUBJECTS.length * 6 &&
+    monthlyExams.length >= SHOWCASE_SUBJECTS.length * 2 &&
+    attendanceRecords.length >= 30 &&
+    schedule.length === 5 &&
+    announcements.length >= 4;
 
   if (hasFullDashboard) {
     return {
