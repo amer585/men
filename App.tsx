@@ -5,10 +5,7 @@ import { Footer } from './components/Footer';
 import { LoginPage } from './components/LoginPage';
 import { StudentDashboard } from './components/StudentDashboard';
 import { CheckCircle2, X } from 'lucide-react';
-
-// ── BACKEND URL ──
-// Gigalixir Express backend
-const BACKEND_URL = 'https://madrastna-backend.gigalixirapp.com/api';
+import { API_BASE_URL } from './config';
 
 // --- CONSTANTS ---
 export const SUBJECTS = [
@@ -284,10 +281,10 @@ export default function App() {
           {currentView === 'landing' && <Hero onLogin={handleStartJourney} />}
           
           {currentView === 'login' && (
-            <LoginPage 
+              <LoginPage 
               onLoginSuccess={handleStudentLoginSuccess} 
               onBack={() => setCurrentView('landing')}
-              backendUrl={BACKEND_URL}
+              backendUrl={API_BASE_URL}
             />
           )}
 

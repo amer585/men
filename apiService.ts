@@ -1,11 +1,4 @@
-// ─────────────────────────────────────────────────────────
-// INTLAQA API Service — Production (Gigalixir)
-// ─────────────────────────────────────────────────────────
-// Express backend deployed on Gigalixir.
-// All requests use ssn_encrypted as primary key + grade_level for routing.
-// ─────────────────────────────────────────────────────────
-
-const BASE_URL = 'https://madrastna-backend.gigalixirapp.com/api';
+import { API_BASE_URL } from './config';
 
 // --- Types ---
 export interface AddStudentPayload {
@@ -63,7 +56,8 @@ async function request<T>(
   body: Record<string, unknown>
 ): Promise<ApiResponse<T>> {
   try {
-    const res = await fetch(`${BASE_URL}/${endpoint}`, {
+    const apiBaseUrl = API_BASE_URL.replace(/\/$/, '');
+    const res = await fetch(`${apiBaseUrl}/${endpoint}`, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

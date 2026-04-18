@@ -13,6 +13,7 @@ const GRADE_OPTIONS = [
   { value: 9, label: 'الثالث الإعدادي' },
   { value: 10, label: 'الأول الثانوي' },
   { value: 11, label: 'الثاني الثانوي' },
+  { value: 12, label: 'الثالث الثانوي' },
 ];
 
 const EGYPTIAN_GOVERNORATES = [
@@ -53,9 +54,9 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onBack, ba
       const [isLoading, setIsLoading] = useState(false);
       const [error, setError] = useState<string | null>(null);
 
-      // Auto-retry fetch to handle backend cold starts (Gigalixir free tier sleep)
+      // Retry transient network or edge failures without forcing the user to resubmit the form.
       const fetchWithRetry = async (url: string, options: RequestInit, retries = 3): Promise<Response> => {
-        const delays = [3000, 5000, 8000];
+        const delays = [800, 1500, 2500];
         for (let i = 0; i < retries; i++) {
           try {
             const controller = new AbortController();
