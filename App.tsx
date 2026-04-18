@@ -281,7 +281,7 @@ export default function App() {
           {currentView === 'landing' && <Hero onLogin={handleStartJourney} />}
           
           {currentView === 'login' && (
-              <LoginPage 
+            <LoginPage
               onLoginSuccess={handleStudentLoginSuccess} 
               onBack={() => setCurrentView('landing')}
               backendUrl={API_BASE_URL}

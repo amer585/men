@@ -9,9 +9,6 @@ dist-ssr/
 .env.*.local
 *.local
 
-# Cloudflare
-.wrangler/
-
 # Logs
 logs/
 *.log
