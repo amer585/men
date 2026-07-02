@@ -23,53 +23,50 @@ function loadSavedStudent(): StudentProfile | null {
   }
 }
 
-function AuroraBackground() {
+function Background() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {/* Base — slightly warmer navy so gold pops */}
-      <div className="absolute inset-0 bg-ink-950" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,#080c18,#0a0f1c_50%,#070b15)]" />
-
-      {/* ROYAL GOLD ORBS — bright, visible, fast-moving */}
+    // FIXED + z-0 (NOT negative). Content wrapper uses z-10 so it's always
+    // above. This is the bulletproof pattern — no body-bg-covering trap.
+    <div
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, #080d1a 0%, #0a101e 50%, #070b15 100%)' }}
+    >
+      {/* Orb 1 — top right, bright core ON screen */}
       <div
-        className="animate-orb1 absolute right-[-8rem] top-[-8rem] h-[45rem] w-[45rem] rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(212,182,118,0.55), rgba(201,169,106,0.22) 35%, transparent 70%)' }}
-      />
-      <div
-        className="animate-orb2 absolute left-[-10rem] top-[10%] h-[40rem] w-[40rem] rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(227,200,145,0.45), rgba(201,169,106,0.15) 40%, transparent 70%)' }}
-      />
-      <div
-        className="animate-orb3 absolute bottom-[-12rem] left-[28%] h-[42rem] w-[42rem] rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.4), rgba(180,150,80,0.1) 40%, transparent 70%)' }}
-      />
-
-      {/* ROYAL LIGHT RAYS — golden beams from top center */}
-      <div
-        className="absolute left-1/2 top-[-20%] h-[80vh] w-[60vw] -translate-x-1/2"
+        className="animate-orb1 absolute rounded-full"
         style={{
-          background: 'conic-gradient(from 270deg at 50% 0%, transparent 35deg, rgba(212,182,118,0.12) 45deg, rgba(212,182,118,0.04) 55deg, transparent 65deg, transparent 85deg, rgba(212,182,118,0.08) 95deg, transparent 105deg)',
-          animation: 'breathe 12s ease-in-out infinite',
+          width: '500px', height: '500px', right: '-120px', top: '-80px',
+          background: 'radial-gradient(circle, rgba(227,200,145,0.6) 0%, rgba(201,169,106,0.25) 40%, transparent 70%)',
         }}
       />
-
-      {/* Central breathing warmth */}
+      {/* Orb 2 — mid left */}
       <div
-        className="animate-breathe absolute left-1/2 top-[40%] h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(212,182,118,0.12), transparent 65%)' }}
+        className="animate-orb2 absolute rounded-full"
+        style={{
+          width: '440px', height: '440px', left: '-100px', top: '30%',
+          background: 'radial-gradient(circle, rgba(227,200,145,0.5) 0%, rgba(201,169,106,0.18) 40%, transparent 70%)',
+        }}
       />
-
-      {/* Faint institutional grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(201,169,106,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(201,169,106,0.04)_1px,transparent_1px)] bg-[size:52px_52px]" />
-
-      {/* Diagonal luxury sheen */}
-      <div className="absolute inset-0 opacity-[0.03] bg-[repeating-linear-gradient(135deg,transparent,transparent_140px,rgba(212,182,118,1)_140px,rgba(212,182,118,1)_141px)]" />
-
-      {/* Top gold edge glow */}
-      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-gold-500/[0.08] to-transparent" />
-
+      {/* Orb 3 — bottom center */}
+      <div
+        className="animate-orb3 absolute rounded-full"
+        style={{
+          width: '480px', height: '480px', left: '40%', bottom: '-160px',
+          background: 'radial-gradient(circle, rgba(212,182,118,0.45) 0%, rgba(201,169,106,0.12) 40%, transparent 70%)',
+        }}
+      />
+      {/* Breathing center glow */}
+      <div
+        className="animate-breathe absolute rounded-full"
+        style={{
+          width: '600px', height: '600px', left: '50%', top: '45%', transform: 'translate(-50%,-50%)',
+          background: 'radial-gradient(circle, rgba(212,182,118,0.18) 0%, transparent 65%)',
+        }}
+      />
+      {/* Faint grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(201,169,106,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(201,169,106,0.04)_1px,transparent_1px)] bg-[size:48px_48px]" />
       {/* Vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(130%_130%_at_50%_30%,transparent_45%,rgba(0,0,0,0.5)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(125%_125%_at_50%_35%,transparent_45%,rgba(0,0,0,0.5)_100%)]" />
     </div>
   );
 }
@@ -113,16 +110,18 @@ export default function App() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col">
-      <AuroraBackground />
-      <Header
-        view={view}
-        onHome={() => (student ? setView('student') : setView('landing'))}
-        onLogout={logout}
-        identity={student?.student_name_ar}
-      />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-6 md:py-12">{body}</main>
-      <Footer />
-    </div>
+    <>
+      <Background />
+      <div className="relative z-10 flex min-h-screen flex-col">
+        <Header
+          view={view}
+          onHome={() => (student ? setView('student') : setView('landing'))}
+          onLogout={logout}
+          identity={student?.student_name_ar}
+        />
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-6 md:py-12">{body}</main>
+        <Footer />
+      </div>
+    </>
   );
 }
