@@ -7,8 +7,10 @@ import { StudentDashboard } from './components/StudentDashboard';
 import type { StudentProfile } from './apiService';
 
 type View = 'landing' | 'student-login' | 'student';
+type Theme = 'dark' | 'light';
 
 const STORAGE_KEY = 'intlaqa_student';
+const THEME_KEY = 'intlaqa_theme';
 
 /** Load a saved student session so a page reload never kicks the user out. */
 function loadSavedStudent(): StudentProfile | null {
@@ -76,18 +78,18 @@ function Background() {
         />
       </div>
 
-      {/* Layer 3: Cinematic gold orbs — layered for depth */}
+      {/* Layer 3: Cinematic gold orbs — 30% bigger for more presence */}
       <div
         className="animate-orb1 absolute rounded-full"
-        style={{ width: '520px', height: '520px', right: '-100px', top: '-60px', background: 'radial-gradient(circle, rgba(231,205,150,0.5) 0%, rgba(201,169,106,0.2) 40%, transparent 70%)' }}
+        style={{ width: '680px', height: '680px', right: '-140px', top: '-100px', background: 'radial-gradient(circle, rgba(231,205,150,0.5) 0%, rgba(201,169,106,0.2) 40%, transparent 70%)' }}
       />
       <div
         className="animate-orb2 absolute rounded-full"
-        style={{ width: '460px', height: '460px', left: '-80px', top: '28%', background: 'radial-gradient(circle, rgba(227,200,145,0.4) 0%, rgba(201,169,106,0.15) 40%, transparent 70%)' }}
+        style={{ width: '600px', height: '600px', left: '-120px', top: '28%', background: 'radial-gradient(circle, rgba(227,200,145,0.4) 0%, rgba(201,169,106,0.15) 40%, transparent 70%)' }}
       />
       <div
         className="animate-orb3 absolute rounded-full"
-        style={{ width: '500px', height: '500px', left: '38%', bottom: '-140px', background: 'radial-gradient(circle, rgba(212,182,118,0.35) 0%, rgba(180,150,80,0.1) 40%, transparent 70%)' }}
+        style={{ width: '650px', height: '650px', left: '38%', bottom: '-200px', background: 'radial-gradient(circle, rgba(212,182,118,0.35) 0%, rgba(180,150,80,0.1) 40%, transparent 70%)' }}
       />
 
       {/* Layer 4: Breathing center warmth */}
@@ -150,10 +152,78 @@ const STARS = [
   { left: '72%', top: '68%', dur: 5.5, delay: 4 },
 ];
 
+/** Original light-mode background — white with purple/blue/cyan glow blobs. */
+function LightBackground() {
+  return (
+    <div
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 50%, #f8fafc 100%)' }}
+    >
+      {/* Grid pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(99,102,241,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(99,102,241,0.04)_1px,transparent_1px)] bg-[size:24px_24px]" />
+
+      {/* Purple blob */}
+      <div
+        className="animate-blob absolute rounded-full"
+        style={{
+          width: '400px', height: '400px', top: '-60px', left: '-40px',
+          background: 'radial-gradient(circle, rgba(168,85,247,0.35), transparent 70%)',
+          mixBlendMode: 'multiply',
+        }}
+      />
+      {/* Blue/cyan blob */}
+      <div
+        className="animate-blob animation-delay-2000 absolute rounded-full"
+        style={{
+          width: '380px', height: '380px', top: '5%', right: '-40px',
+          background: 'radial-gradient(circle, rgba(56,189,248,0.3), transparent 70%)',
+          mixBlendMode: 'multiply',
+        }}
+      />
+      {/* Indigo blob */}
+      <div
+        className="animate-blob animation-delay-4000 absolute rounded-full"
+        style={{
+          width: '420px', height: '420px', bottom: '-120px', left: '25%',
+          background: 'radial-gradient(circle, rgba(129,140,248,0.28), transparent 70%)',
+          mixBlendMode: 'multiply',
+        }}
+      />
+      {/* Center soft glow */}
+      <div
+        className="animate-breathe absolute rounded-full"
+        style={{
+          width: '600px', height: '600px', left: '50%', top: '40%', transform: 'translate(-50%,-50%)',
+          background: 'radial-gradient(circle, rgba(167,139,250,0.08), transparent 65%)',
+        }}
+      />
+    </div>
+  );
+}
+
 export default function App() {
   // Start from localStorage so reload keeps the user in the dashboard.
   const [student, setStudent] = useState<StudentProfile | null>(loadSavedStudent);
   const [view, setView] = useState<View>(loadSavedStudent() ? 'student' : 'landing');
+  const [theme, setTheme] = useState<Theme>(() => {
+    try {
+      return (localStorage.getItem(THEME_KEY) as Theme) || 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+
+  // Apply theme class to <html> so CSS overrides take effect.
+  useEffect(() => {
+    const html = document.documentElement;
+    if (theme === 'light') html.classList.add('light');
+    else html.classList.remove('light');
+    try { localStorage.setItem(THEME_KEY, theme); } catch { /* ignore */ }
+  }, [theme]);
+
+  function toggleTheme() {
+    setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
+  }
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -190,10 +260,12 @@ export default function App() {
 
   return (
     <>
-      <Background />
+      {theme === 'dark' ? <Background /> : <LightBackground />}
       <div className="relative z-10 flex min-h-screen flex-col">
         <Header
           view={view}
+          theme={theme}
+          onToggleTheme={toggleTheme}
           onHome={() => (student ? setView('student') : setView('landing'))}
           onLogout={logout}
           identity={student?.student_name_ar}

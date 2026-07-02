@@ -2,12 +2,14 @@ import { Logo } from './Logo';
 
 interface HeaderProps {
   view: string;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
   onHome: () => void;
   onLogout?: () => void;
   identity?: string;
 }
 
-export function Header({ view, onHome, onLogout, identity }: HeaderProps) {
+export function Header({ view, theme, onToggleTheme, onHome, onLogout, identity }: HeaderProps) {
   const loggedIn = view === 'student';
   return (
     <header className="sticky top-0 z-30 border-b border-gold-500/10 bg-ink-950/80 backdrop-blur-xl">
@@ -23,8 +25,18 @@ export function Header({ view, onHome, onLogout, identity }: HeaderProps) {
           </div>
         </button>
 
-        {/* Left corner — identity + home/logout */}
+        {/* Left corner — theme toggle + identity + home/logout */}
         <div className="flex items-center gap-3">
+          {/* Theme toggle */}
+          <button
+            onClick={onToggleTheme}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-gold-500/15 bg-white/[0.03] text-lg transition hover:bg-white/[0.06]"
+            title={theme === 'dark' ? 'الوضع الفاتح' : 'الوضع الداكن'}
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+
           {loggedIn && identity && (
             <span className="hidden rounded-full border border-gold-500/15 bg-white/[0.03] px-3 py-1.5 text-xs text-slate-300 sm:inline">
               {identity}
