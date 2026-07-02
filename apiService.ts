@@ -84,11 +84,17 @@ async function request<T>(
     if (token) headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE_URL}/${endpoint}`, {
-    method: options.method,
-    headers,
-    body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}/${endpoint}`, {
+      method: options.method,
+      headers,
+      body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+    });
+  } catch {
+    // Network-level failure: server unreachable / refused connection / CORS.
+    throw new ApiError(0, 'تعذّر الوصول إلى الخادم — تأكد أن الباك-إند يعمل على Hugging Face. (Server unreachable)');
+  }
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
