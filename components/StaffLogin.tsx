@@ -42,7 +42,7 @@ export function StaffLogin({ onSuccess, onBack }: Props) {
             🏢
           </div>
           <h2 className="mt-4 text-2xl font-black text-white">إدارتنا الشاملة</h2>
-          <p className="mt-1 text-sm text-slate-400">دخول الإدارة والمدرّسين</p>
+          <p className="mt-1 text-sm text-slate-400">بوابة الإدارة والمشرفين</p>
         </div>
 
         <form onSubmit={submit} className="space-y-4">
