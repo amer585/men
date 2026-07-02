@@ -27,11 +27,12 @@ function AuroraBackground() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
       <div className="absolute inset-0 bg-ink-950" />
-      <div className="absolute inset-0 bg-[radial-gradient(60rem_60rem_at_85%_-10%,rgba(16,185,129,0.16),transparent),radial-gradient(50rem_50rem_at_-10%_10%,rgba(56,189,248,0.12),transparent)]" />
-      <div className="animate-blob absolute -top-32 right-[-6rem] h-[28rem] w-[28rem] rounded-full bg-brand-500/20 blur-3xl" />
-      <div className="animate-blob delay-2000 absolute top-1/3 left-[-8rem] h-[26rem] w-[26rem] rounded-full bg-sky-500/15 blur-3xl" />
-      <div className="animate-blob delay-4000 absolute bottom-[-10rem] left-1/3 h-[30rem] w-[30rem] rounded-full bg-indigo-500/15 blur-3xl" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px]" />
+      {/* Subtle, formal gold radial glow — no neon */}
+      <div className="absolute inset-0 bg-[radial-gradient(55rem_55rem_at_88%_-8%,rgba(201,169,106,0.10),transparent),radial-gradient(45rem_45rem_at_-8%_8%,rgba(201,169,106,0.05),transparent)]" />
+      {/* Faint institutional grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(201,169,106,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(201,169,106,0.025)_1px,transparent_1px)] bg-[size:40px_40px]" />
+      {/* Vignette for depth */}
+      <div className="absolute inset-0 bg-[radial-gradient(120%_120%_at_50%_0%,transparent_60%,rgba(0,0,0,0.5)_100%)]" />
     </div>
   );
 }

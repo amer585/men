@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { studentLogin, logAction, ACTION_TYPES, type StudentProfile } from '../apiService';
 import { GRADE_LABELS } from '../schoolData';
+import { Logo } from './Logo';
 
 interface Props {
   onSuccess: (profile: StudentProfile) => void;
@@ -23,7 +24,6 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
     setLoading(true);
     try {
       const { student } = await studentLogin(ssn, Number(grade));
-      // Fire-and-forget activity log (does not block login).
       void logAction({
         ssn_encrypted: student.ssn_encrypted,
         grade_level: student.grade_level,
@@ -41,15 +41,13 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
     <div className="mx-auto max-w-md animate-rise">
       <button
         onClick={onBack}
-        className="mb-5 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/10"
+        className="mb-5 inline-flex items-center gap-2 rounded-xl border border-gold-500/15 bg-white/[0.03] px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/[0.06]"
       >
         العودة للرئيسية
       </button>
-      <div className="rounded-[2rem] glass-strong p-8">
-        <div className="mb-6 text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-emerald-600 text-2xl shadow-lg shadow-brand-500/30">
-            🎓
-          </div>
+      <div className="card-accent rounded-[2rem] glass-strong p-8">
+        <div className="mb-7 text-center">
+          <Logo size={56} glow className="mx-auto rounded-2xl border border-gold-500/15 bg-ink-900/40 p-2" />
           <h2 className="mt-4 text-2xl font-black text-white">دخول الطالب</h2>
           <p className="mt-1 text-sm text-slate-400">أدخل رقم الطالب والصف الدراسي</p>
         </div>
@@ -63,7 +61,7 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
               inputMode="numeric"
               dir="ltr"
               placeholder="00000000000000"
-              className="w-full rounded-xl border border-white/10 bg-ink-900/60 px-4 py-3 text-center font-mono text-lg tracking-widest text-white placeholder:text-slate-600 focus:border-brand-400/50 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              className="w-full rounded-xl border border-gold-500/10 bg-ink-900/60 px-4 py-3 text-center font-mono text-lg tracking-widest text-white placeholder:text-slate-600 focus:border-gold-400/40 focus:outline-none focus:ring-2 focus:ring-gold-500/15"
             />
           </label>
           <label className="block">
@@ -71,7 +69,7 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
             <select
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-ink-900/60 px-4 py-3 text-white focus:border-brand-400/50 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              className="w-full rounded-xl border border-gold-500/10 bg-ink-900/60 px-4 py-3 text-white focus:border-gold-400/40 focus:outline-none focus:ring-2 focus:ring-gold-500/15"
             >
               {Object.entries(GRADE_LABELS).map(([k, v]) => (
                 <option key={k} value={k} className="bg-ink-900">
@@ -90,7 +88,7 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 py-3.5 text-base font-bold text-white shadow-lg shadow-brand-500/30 transition hover:brightness-110 disabled:opacity-50"
+            className="btn-gold w-full rounded-xl py-3.5 text-base font-bold text-ink-950 transition hover:brightness-110 disabled:opacity-50"
           >
             {loading ? 'جارٍ التحقق…' : 'دخول'}
           </button>

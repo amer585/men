@@ -2,18 +2,19 @@ import type { PortalData } from '../../apiService';
 
 const DAY_ORDER = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
 
-const SUBJECT_COLORS: Record<string, string> = {
-  'اللغة العربية': 'from-emerald-500/20 to-emerald-600/10 text-emerald-300',
-  'اللغة الإنجليزية': 'from-blue-500/20 to-blue-600/10 text-blue-300',
-  'الرياضيات': 'from-violet-500/20 to-violet-600/10 text-violet-300',
-  'العلوم': 'from-teal-500/20 to-teal-600/10 text-teal-300',
-  'الدراسات الاجتماعية': 'from-amber-500/20 to-amber-600/10 text-amber-300',
-  'التربية الدينية': 'from-cyan-500/20 to-cyan-600/10 text-cyan-300',
-  'الحاسب الآلي': 'from-rose-500/20 to-rose-600/10 text-rose-300',
+// Muted, formal variations — all warm gold-tinted slates, no neon rainbow
+const SUBJECT_TONES: Record<string, string> = {
+  'اللغة العربية': 'border-gold-500/15 bg-gold-500/[0.05] text-gold-300',
+  'اللغة الإنجليزية': 'border-sky-500/12 bg-sky-500/[0.04] text-sky-200/80',
+  'الرياضيات': 'border-violet-500/12 bg-violet-500/[0.04] text-violet-200/80',
+  'العلوم': 'border-teal-500/12 bg-teal-500/[0.04] text-teal-200/80',
+  'الدراسات الاجتماعية': 'border-amber-500/12 bg-amber-500/[0.04] text-amber-200/80',
+  'التربية الدينية': 'border-cyan-500/12 bg-cyan-500/[0.04] text-cyan-200/80',
+  'الحاسب الآلي': 'border-rose-500/12 bg-rose-500/[0.04] text-rose-200/80',
 };
 
 function subjectStyle(subject: string): string {
-  return SUBJECT_COLORS[subject] || 'from-slate-500/20 to-slate-600/10 text-slate-300';
+  return SUBJECT_TONES[subject] || 'border-slate-500/12 bg-slate-500/[0.04] text-slate-300';
 }
 
 export function TabSchedule({ data }: { data: PortalData }) {
@@ -22,7 +23,7 @@ export function TabSchedule({ data }: { data: PortalData }) {
   if (days.length === 0) {
     return (
       <div className="flex flex-col items-center gap-3 py-16">
-        <span className="text-4xl opacity-40">📅</span>
+        <span className="text-3xl text-gold-500/30">—</span>
         <p className="text-sm text-slate-500">لا يوجد جدول دراسي متاح</p>
       </div>
     );
@@ -35,14 +36,14 @@ export function TabSchedule({ data }: { data: PortalData }) {
         return (
           <div key={day}>
             <div className="mb-2 flex items-center gap-2 px-1">
-              <span className="h-2 w-2 rounded-full bg-brand-400" />
+              <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
               <h3 className="text-sm font-bold text-white">{day}</h3>
             </div>
             <div className="space-y-2">
               {periods.map((p, pi) => (
                 <div
                   key={`${day}-${p.period}`}
-                  className={`flex items-center gap-3 rounded-2xl bg-gradient-to-l ${subjectStyle(p.subject_name)} border border-white/5 p-3.5 transition hover:scale-[1.01]`}
+                  className={`flex items-center gap-3 rounded-2xl border ${subjectStyle(p.subject_name)} p-3.5 transition hover:scale-[1.01]`}
                   style={{ animation: `tabRise 0.3s cubic-bezier(0.22,1,0.36,1) both`, animationDelay: `${(di * 7 + pi) * 40}ms` }}
                 >
                   <div className="flex flex-col items-center">

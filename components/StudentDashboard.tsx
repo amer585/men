@@ -58,22 +58,18 @@ export function StudentDashboard({ student, onLogout }: Props) {
   return (
     <div className="animate-rise space-y-5">
       {/* Profile header */}
-      <section className="relative overflow-hidden rounded-[2rem] glass-strong p-6 md:p-8">
-        <div className="absolute -left-16 -top-16 h-48 w-48 rounded-full bg-brand-500/20 blur-3xl" />
-        <div className="absolute -right-10 -bottom-20 h-48 w-48 rounded-full bg-sky-500/15 blur-3xl" />
+      <section className="card-accent relative overflow-hidden rounded-[2rem] glass-strong p-6 md:p-8">
+        <div className="absolute -right-12 -top-16 h-52 w-52 rounded-full bg-gold-500/[0.07] blur-3xl" />
         <div className="relative flex flex-col items-center gap-4 text-center sm:flex-row sm:text-right">
-          <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-sky-500 text-3xl shadow-xl shadow-brand-500/30 md:h-20 md:w-20 md:text-4xl">
-            <div className="animate-pulse-glow absolute inset-0 rounded-2xl bg-brand-400/40 blur-md" />
-            <span className="relative">{student.gender === 'F' ? '🌟' : '🚀'}</span>
-          </div>
+          <Logo size={64} glow className="rounded-2xl border border-gold-500/15 bg-ink-900/40 p-2" />
           <div className="flex-1">
-            <p className="text-xs font-semibold uppercase tracking-widest text-brand-300">إدارتنا الشاملة · مرحبًا بك</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-500/70">مرحبًا بك</p>
             <h1 className="mt-1 text-2xl font-black text-white md:text-3xl">{student.student_name_ar || 'عزيزي الطالب'}</h1>
             <p className="mt-1 text-sm text-slate-400">{gradeLabel(student.grade_level)} · {student.school_name}</p>
           </div>
           <button
             onClick={onLogout}
-            className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+            className="rounded-xl border border-rose-400/15 bg-rose-500/5 px-4 py-2 text-sm font-semibold text-rose-300/90 transition hover:bg-rose-500/15"
           >
             خروج
           </button>
@@ -94,7 +90,7 @@ export function StudentDashboard({ student, onLogout }: Props) {
                 }`}
               >
                 {active && (
-                  <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-600 shadow-lg shadow-brand-500/30 transition-all duration-300" />
+                  <span className="absolute inset-0 rounded-xl border border-gold-500/25 bg-gold-500/10 shadow-lg shadow-gold-500/10 transition-all duration-300" />
                 )}
                 {!active && (
                   <span className="absolute inset-0 rounded-xl bg-white/0 transition-all duration-300 group-hover:bg-white/5" />
