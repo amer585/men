@@ -166,3 +166,60 @@ export async function logAction(payload: {
 }): Promise<{ message: string; total_inserted: number }> {
   return request('logAction', { method: 'POST', body: payload });
 }
+
+// --- Student portal (full dashboard data) ---
+
+export interface PortalGrade {
+  subject_name: string;
+  grade_value: string;
+  updated_at: string | null;
+  teacher_id: number | null;
+}
+
+export interface PortalAttendance {
+  date: string;
+  status: string;
+  note: string | null;
+}
+
+export interface PortalScheduleItem {
+  period: number;
+  start_time: string;
+  end_time: string;
+  subject_name: string;
+  teacher_name: string | null;
+}
+
+export interface PortalAnnouncement {
+  id: number;
+  title: string;
+  content: string;
+  category: string;
+  importance: string;
+  created_at: string;
+}
+
+export interface PortalData {
+  student: StudentProfile;
+  grades: PortalGrade[];
+  average: string | null;
+  attendance: PortalAttendance[];
+  attendanceStats: {
+    present: number;
+    absent: number;
+    late: number;
+    excused: number;
+    total: number;
+    percentage: number;
+  };
+  schedule: Record<string, PortalScheduleItem[]>;
+  announcements: PortalAnnouncement[];
+}
+
+export async function getStudentPortal(
+  ssn_encrypted: string,
+  grade_level: number,
+): Promise<PortalData> {
+  const qs = `?ssn_encrypted=${encodeURIComponent(ssn_encrypted)}&grade_level=${grade_level}`;
+  return request(`student/portal${qs}`, { method: 'GET' });
+}
