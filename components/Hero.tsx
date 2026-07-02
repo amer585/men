@@ -3,77 +3,62 @@ interface HeroProps {
   onStaff: () => void;
 }
 
-const FEATURES = [
-  { icon: '🎓', title: 'بوابة الطلاب', desc: 'متابعة البيانات الدراسية والدرجات بسهولة وأمان.' },
-  { icon: '🏫', title: 'إدارة المدارس', desc: 'تسجيل الطلاب وإدخال الدرجات وإدارة الفصول.' },
-  { icon: '🛡️', title: 'حماية متقدمة', desc: 'مصادقة مشفّرة (JWT + bcrypt) وصلاحيات دقيقة.' },
-  { icon: '⚡', title: 'أداء فائق', desc: 'قاعدة بيانات PostgreSQL وطبقة تخزين مؤقت Redis.' },
-];
-
-const STATS = [
-  { value: '12', label: 'صف دراسي' },
-  { value: '27', label: 'محافظة' },
-  { value: '99.9%', label: 'وقت التشغيل' },
-  { value: 'REST', label: 'واجهة برمجية' },
-];
-
 export function Hero({ onStudent, onStaff }: HeroProps) {
   return (
-    <div className="animate-rise">
-      {/* Headline */}
-      <section className="relative overflow-hidden rounded-[2rem] glass-strong p-8 text-center md:p-14">
-        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-brand-500/20 blur-3xl" />
-        <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl" />
-        <div className="relative">
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand-400/30 bg-brand-500/10 px-4 py-1.5 text-xs font-semibold text-brand-300">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-brand-400" />
-            النظام يعمل الآن · PostgreSQL + Redis
-          </span>
-          <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-black leading-tight text-white md:text-6xl">
-            منصة <span className="text-gradient">مدرستنا</span> التعليمية
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base text-slate-300 md:text-lg">
-            بوابة موحّدة للطلاب والمدرسين والإدارة — سجّل الدخول لمتابعة بياناتك الدراسية،
-            أو أدِر فصولك ودرجات طلابك من مكان واحد.
-          </p>
-          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <button
-              onClick={onStudent}
-              className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-500 to-emerald-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-brand-500/30 transition hover:shadow-brand-500/50 hover:brightness-110 sm:w-auto"
-            >
-              🎓 دخول الطالب
-              <span className="transition group-hover:-translate-x-1">←</span>
-            </button>
-            <button
-              onClick={onStaff}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-8 py-4 text-base font-bold text-slate-100 backdrop-blur transition hover:bg-white/10 sm:w-auto"
-            >
-              🏫 دخول المدرّس / الإدارة
-            </button>
-          </div>
+    <div className="animate-rise flex flex-col items-center justify-center py-8 text-center md:py-16">
+      {/* Floating decorative orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10 hidden md:block">
+        <div className="animate-float absolute left-[12%] top-[18%] text-3xl opacity-30">📘</div>
+        <div className="animate-float delay-2000 absolute right-[14%] top-[24%] text-4xl opacity-25">✏️</div>
+        <div className="animate-float delay-4000 absolute bottom-[16%] left-[20%] text-3xl opacity-20">🎓</div>
+        <div className="animate-float delay-6000 absolute bottom-[22%] right-[18%] text-3xl opacity-25">📐</div>
+      </div>
+
+      {/* Badge-less crest */}
+      <div className="relative mb-8">
+        <div className="animate-pulse-glow absolute inset-0 rounded-full bg-brand-500/30 blur-2xl" />
+        <div className="relative flex h-24 w-24 items-center justify-center rounded-[2rem] bg-gradient-to-br from-brand-400 via-emerald-500 to-sky-500 text-5xl shadow-2xl shadow-brand-500/40 glow-ring">
+          📚
         </div>
-      </section>
+      </div>
 
-      {/* Stats */}
-      <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {STATS.map((s) => (
-          <div key={s.label} className="rounded-2xl glass p-4 text-center">
-            <p className="text-2xl font-black text-white md:text-3xl">{s.value}</p>
-            <p className="mt-1 text-xs text-slate-400">{s.label}</p>
-          </div>
-        ))}
-      </section>
+      <h1 className="max-w-4xl text-5xl font-black leading-[1.1] tracking-tight text-white sm:text-6xl md:text-7xl">
+        منصة <span className="text-shimmer">مدرستنا</span>
+        <br />
+        <span className="text-3xl font-extrabold text-slate-300 sm:text-4xl md:text-5xl">
+          التعليمية الذكية
+        </span>
+      </h1>
 
-      {/* Features */}
-      <section className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {FEATURES.map((f) => (
-          <div key={f.title} className="group rounded-2xl glass p-5 transition hover:border-brand-400/30 hover:bg-white/[0.06]">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-2xl">{f.icon}</div>
-            <h3 className="mt-4 font-bold text-white">{f.title}</h3>
-            <p className="mt-1.5 text-sm text-slate-400">{f.desc}</p>
-          </div>
-        ))}
-      </section>
+      <p className="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-slate-400 md:text-xl">
+        بوابتك الموحّدة لمتابعة المسار الدراسي، إدارة الفصول، وإدخال الدرجات —
+        كل ذلك في تجربة واحدة سلسة وآمنة.
+      </p>
+
+      {/* Two clean CTAs — centered, no overflow */}
+      <div className="mt-10 flex w-full flex-col items-stretch justify-center gap-4 sm:w-auto sm:flex-row sm:items-center">
+        <button
+          onClick={onStudent}
+          className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-brand-500 to-emerald-600 px-9 py-4 text-base font-bold text-white shadow-xl shadow-brand-500/30 transition-all duration-300 hover:scale-[1.03] hover:shadow-brand-500/50 sm:px-10"
+        >
+          <span className="text-xl">🎓</span>
+          دخول الطالب
+          <span className="transition-transform duration-300 group-hover:-translate-x-1">←</span>
+        </button>
+
+        <button
+          onClick={onStaff}
+          className="group inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/[0.06] px-9 py-4 text-base font-bold text-slate-100 backdrop-blur transition-all duration-300 hover:scale-[1.03] hover:border-brand-400/40 hover:bg-white/[0.1] sm:px-10"
+        >
+          <span className="text-xl">🏢</span>
+          إدارتنا الشاملة
+        </button>
+      </div>
+
+      {/* Trust line */}
+      <p className="mt-10 text-xs font-medium text-slate-500">
+        آمن · سريع · يعمل على جميع الأجهزة
+      </p>
     </div>
   );
 }

@@ -52,8 +52,11 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
 
   return (
     <div className="mx-auto max-w-md animate-rise">
-      <button onClick={onBack} className="mb-4 text-sm text-slate-400 transition hover:text-white">
-        → العودة للرئيسية
+      <button
+        onClick={onBack}
+        className="mb-5 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/10"
+      >
+        العودة للرئيسية
       </button>
       <div className="rounded-[2rem] glass-strong p-8">
         <div className="mb-6 text-center">

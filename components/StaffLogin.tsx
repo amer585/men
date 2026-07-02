@@ -30,16 +30,19 @@ export function StaffLogin({ onSuccess, onBack }: Props) {
 
   return (
     <div className="mx-auto max-w-md animate-rise">
-      <button onClick={onBack} className="mb-4 text-sm text-slate-400 transition hover:text-white">
-        → العودة للرئيسية
+      <button
+        onClick={onBack}
+        className="mb-5 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/10"
+      >
+        العودة للرئيسية
       </button>
       <div className="rounded-[2rem] glass-strong p-8">
         <div className="mb-6 text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-600 text-2xl shadow-lg shadow-indigo-500/30">
-            🏫
+            🏢
           </div>
-          <h2 className="mt-4 text-2xl font-black text-white">دخول المدرّس / الإدارة</h2>
-          <p className="mt-1 text-sm text-slate-400">الوصول إلى الفصول والدرجات</p>
+          <h2 className="mt-4 text-2xl font-black text-white">إدارتنا الشاملة</h2>
+          <p className="mt-1 text-sm text-slate-400">دخول الإدارة والمدرّسين</p>
         </div>
 
         <form onSubmit={submit} className="space-y-4">
