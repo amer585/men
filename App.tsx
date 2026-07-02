@@ -255,7 +255,7 @@ export default function App() {
   } else if (view === 'student' && student) {
     body = <StudentDashboard student={student} onLogout={logout} />;
   } else {
-    body = <Hero onStudent={() => setView('student-login')} />;
+    body = <Hero onStudent={() => setView('student-login')} theme={theme} />;
   }
 
   return (

@@ -222,31 +222,31 @@ html.light .text-slate-400 { color: #64748b !important; }
 html.light .text-slate-500 { color: #94a3b8 !important; }
 html.light .text-slate-600 { color: #94a3b8 !important; }
 
-/* Accent colors stay vibrant */
+/* Accent colors — blue/cyan (reference) */
 html.light .text-gold-400,
-html.light .text-gold-300 { color: #7c3aed !important; }
+html.light .text-gold-300 { color: #2563eb !important; }
 html.light .text-gold-500\/70,
-html.light .text-gold-500\/80 { color: #6366f1 !important; }
+html.light .text-gold-500\/80 { color: #3b82f6 !important; }
 
-/* Gradient text shifts to purple-blue */
+/* Gradient text — blue to cyan (reference) */
 html.light .text-gradient,
 html.light .text-shimmer {
-  background: linear-gradient(120deg, #7c3aed 0%, #4f46e5 40%, #2563eb 80%);
+  background: linear-gradient(120deg, #2563eb 0%, #0891b2 50%, #06b6d4 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* Buttons become purple-blue gradient */
+/* Buttons — reference style: solid slate-900 with shadow-xl */
 html.light .btn-gold {
-  background: linear-gradient(135deg, #7c3aed, #6366f1, #3b82f6);
+  background: #0f172a;
   color: #fff !important;
-  box-shadow: 0 10px 30px -10px rgba(124, 58, 237, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+  box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.35);
 }
 html.light .btn-gold:hover {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed, #6366f1);
-  box-shadow: 0 14px 40px -8px rgba(124, 58, 237, 0.6), inset 0 1px 0 rgba(255,255,255,0.25);
+  background: #1e293b;
+  box-shadow: 0 16px 40px -8px rgba(15, 23, 42, 0.45);
 }
 
 /* Inputs in light mode */
@@ -269,13 +269,13 @@ html.light .hairline {
   background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.2), transparent);
 }
 
-/* Borders flip */
+/* Borders — slate-100 style (reference) */
 html.light .border-gold-500\/10,
 html.light .border-gold-500\/15,
 html.light .border-gold-500\/8,
-html.light .border-gold-500\/20 { border-color: rgba(139, 92, 246, 0.12) !important; }
+html.light .border-gold-500\/20 { border-color: rgba(241, 245, 249, 1) !important; }
 html.light .border-white\/5,
-html.light .border-white\/10 { border-color: rgba(0, 0, 0, 0.08) !important; }
+html.light .border-white\/10 { border-color: rgba(226, 232, 240, 1) !important; }
 
 /* Backgrounds that reference ink colors */
 html.light .bg-ink-950\/70,
