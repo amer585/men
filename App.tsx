@@ -26,17 +26,40 @@ function loadSavedStudent(): StudentProfile | null {
 function AuroraBackground() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+      {/* Base navy */}
       <div className="absolute inset-0 bg-ink-950" />
-      {/* Large luxurious gold glow — top right */}
-      <div className="absolute inset-0 bg-[radial-gradient(80rem_80rem_at_85%_-12%,rgba(201,169,106,0.18),transparent_55%),radial-gradient(60rem_60rem_at_-10%_5%,rgba(201,169,106,0.09),transparent_60%)]" />
-      {/* Secondary warm glow — bottom center for depth */}
-      <div className="absolute inset-0 bg-[radial-gradient(50rem_50rem_at_50%_110%,rgba(201,169,106,0.07),transparent_55%)]" />
-      {/* Subtle institutional grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(201,169,106,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(201,169,106,0.03)_1px,transparent_1px)] bg-[size:44px_44px]" />
-      {/* Diagonal sheen lines for luxury texture */}
-      <div className="absolute inset-0 opacity-[0.015] bg-[repeating-linear-gradient(135deg,transparent,transparent_100px,rgba(201,169,106,1)_100px,rgba(201,169,106,1)_101px)]" />
-      {/* Vignette for depth */}
-      <div className="absolute inset-0 bg-[radial-gradient(120%_120%_at_50%_0%,transparent_55%,rgba(0,0,0,0.6)_100%)]" />
+
+      {/* Layer 1: animated floating golden orbs (the living glow) */}
+      <div
+        className="animate-orb1 absolute right-[-8rem] top-[-10rem] h-[42rem] w-[42rem] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.22), rgba(201,169,106,0.08) 40%, transparent 70%)', filter: 'blur(40px)' }}
+      />
+      <div
+        className="animate-orb2 absolute left-[-12rem] top-[20%] h-[38rem] w-[38rem] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.15), rgba(201,169,106,0.05) 40%, transparent 70%)', filter: 'blur(50px)' }}
+      />
+      <div
+        className="animate-orb3 absolute bottom-[-15rem] left-[25%] h-[44rem] w-[44rem] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.12), rgba(201,169,106,0.04) 40%, transparent 70%)', filter: 'blur(60px)' }}
+      />
+
+      {/* Layer 2: central breathing warmth */}
+      <div
+        className="animate-breathe absolute left-1/2 top-1/3 h-[50rem] w-[50rem] -translate-x-1/2 rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.06), transparent 60%)' }}
+      />
+
+      {/* Layer 3: static ambient glows for richness */}
+      <div className="absolute inset-0 bg-[radial-gradient(60rem_60rem_at_50%_-10%,rgba(201,169,106,0.06),transparent_50%)]" />
+
+      {/* Layer 4: subtle institutional grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(201,169,106,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(201,169,106,0.035)_1px,transparent_1px)] bg-[size:48px_48px]" />
+
+      {/* Layer 5: diagonal luxury sheen */}
+      <div className="absolute inset-0 opacity-[0.02] bg-[repeating-linear-gradient(135deg,transparent,transparent_120px,rgba(201,169,106,1)_120px,rgba(201,169,106,1)_121px)]" />
+
+      {/* Layer 6: vignette for depth */}
+      <div className="absolute inset-0 bg-[radial-gradient(130%_130%_at_50%_0%,transparent_50%,rgba(0,0,0,0.55)_100%)]" />
     </div>
   );
 }
