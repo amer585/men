@@ -1,20 +1,19 @@
 import type { PortalData } from '../../apiService';
 
-const DAY_ORDER = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
+const DAY_ORDER = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء'];
 
-// Muted, formal variations — all warm gold-tinted slates, no neon rainbow
-const SUBJECT_TONES: Record<string, string> = {
-  'اللغة العربية': 'border-gold-500/15 bg-gold-500/[0.05] text-gold-300',
-  'اللغة الإنجليزية': 'border-sky-500/12 bg-sky-500/[0.04] text-sky-200/80',
-  'الرياضيات': 'border-violet-500/12 bg-violet-500/[0.04] text-violet-200/80',
-  'العلوم': 'border-teal-500/12 bg-teal-500/[0.04] text-teal-200/80',
-  'الدراسات الاجتماعية': 'border-amber-500/12 bg-amber-500/[0.04] text-amber-200/80',
-  'التربية الدينية': 'border-cyan-500/12 bg-cyan-500/[0.04] text-cyan-200/80',
-  'الحاسب الآلي': 'border-rose-500/12 bg-rose-500/[0.04] text-rose-200/80',
+const SUBJECT_STYLES: Record<string, string> = {
+  'اللغة العربية': 'bg-gold-500/10 text-gold-300 border-gold-500/15',
+  'اللغة الإنجليزية': 'bg-sky-500/8 text-sky-200/80 border-sky-500/12',
+  'الرياضيات': 'bg-violet-500/8 text-violet-200/80 border-violet-500/12',
+  'العلوم': 'bg-teal-500/8 text-teal-200/80 border-teal-500/12',
+  'الدراسات الاجتماعية': 'bg-amber-500/8 text-amber-200/80 border-amber-500/12',
+  'التربية الدينية': 'bg-cyan-500/8 text-cyan-200/80 border-cyan-500/12',
+  'الحاسب الآلي': 'bg-rose-500/8 text-rose-200/80 border-rose-500/12',
 };
 
-function subjectStyle(subject: string): string {
-  return SUBJECT_TONES[subject] || 'border-slate-500/12 bg-slate-500/[0.04] text-slate-300';
+function subjectStyle(s: string): string {
+  return SUBJECT_STYLES[s] || 'bg-slate-500/8 text-slate-300 border-slate-500/12';
 }
 
 export function TabSchedule({ data }: { data: PortalData }) {
@@ -29,39 +28,68 @@ export function TabSchedule({ data }: { data: PortalData }) {
     );
   }
 
+  // Build a grid: periods (rows) × days (columns).
+  // Find all unique periods across all days.
+  const allPeriods = Array.from(new Set(
+    days.flatMap((d) => (data.schedule[d] || []).map((p) => p.period)),
+  )).sort((a, b) => a - b);
+
+  // Build a lookup map: { day-period: scheduleItem }
+  const lookup: Record<string, typeof data.schedule[string][0]> = {};
+  for (const day of days) {
+    for (const item of data.schedule[day] || []) {
+      lookup[`${day}-${item.period}`] = item;
+    }
+  }
+
   return (
-    <div className="space-y-4">
-      {days.map((day, di) => {
-        const periods = data.schedule[day] || [];
-        return (
-          <div key={day}>
-            <div className="mb-2 flex items-center gap-2 px-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-gold-500" />
-              <h3 className="text-sm font-bold text-white">{day}</h3>
-            </div>
-            <div className="space-y-2">
-              {periods.map((p, pi) => (
-                <div
-                  key={`${day}-${p.period}`}
-                  className={`flex items-center gap-3 rounded-2xl border ${subjectStyle(p.subject_name)} p-3.5 transition hover:scale-[1.01]`}
-                  style={{ animation: `tabRise 0.3s cubic-bezier(0.22,1,0.36,1) both`, animationDelay: `${(di * 7 + pi) * 40}ms` }}
-                >
-                  <div className="flex flex-col items-center">
-                    <span className="text-[10px] text-slate-500">من</span>
-                    <span dir="ltr" className="font-mono text-xs font-bold text-white">{p.start_time}</span>
-                  </div>
-                  <div className="h-8 w-px bg-white/10" />
-                  <div className="flex-1">
-                    <p className="text-sm font-bold text-white">{p.subject_name}</p>
-                    {p.teacher_name && <p className="text-xs text-slate-400">{p.teacher_name}</p>}
-                  </div>
-                  <span className="rounded-lg bg-black/20 px-2 py-1 text-[11px] font-medium text-slate-400">حصة {p.period}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })}
+    <div className="animate-tab-rise overflow-x-auto">
+      <table className="w-full min-w-[700px] border-separate border-spacing-1.5">
+        <thead>
+          <tr>
+            <th className="sticky right-0 z-10 rounded-xl bg-ink-900/80 px-3 py-3 text-center text-xs font-bold text-gold-400 backdrop-blur-sm">
+              الحصة
+            </th>
+            {days.map((day) => (
+              <th key={day} className="rounded-xl bg-ink-900/60 px-2 py-3 text-center text-xs font-bold text-white">
+                {day}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {allPeriods.map((period, pi) => {
+            const firstItem = days.map((d) => lookup[`${d}-${period}`]).find(Boolean);
+            const time = firstItem ? `${firstItem.start_time}` : '';
+            return (
+              <tr key={period}>
+                {/* Period/time label */}
+                <td className="sticky right-0 z-10 rounded-xl border border-gold-500/10 bg-ink-900/80 px-2 py-2.5 text-center backdrop-blur-sm">
+                  <div className="text-xs font-bold text-white">{time}</div>
+                  <div className="text-[10px] text-slate-500">حصة {period}</div>
+                </td>
+                {/* Day cells */}
+                {days.map((day) => {
+                  const item = lookup[`${day}-${period}`];
+                  if (!item) {
+                    return <td key={day} className="rounded-xl border border-white/[0.03] bg-white/[0.01] p-2" />;
+                  }
+                  return (
+                    <td
+                      key={day}
+                      className={`rounded-xl border p-2.5 text-center transition hover:scale-[1.02] ${subjectStyle(item.subject_name)}`}
+                      style={{ animation: `tabRise 0.3s ease both`, animationDelay: `${pi * 30}ms` }}
+                    >
+                      <div className="text-xs font-bold leading-tight">{item.subject_name}</div>
+                      {item.teacher_name && <div className="mt-0.5 text-[10px] opacity-70">{item.teacher_name}</div>}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

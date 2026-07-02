@@ -199,10 +199,17 @@ export interface PortalAnnouncement {
   created_at: string;
 }
 
+export interface WeeklyAssessment {
+  week: number;
+  score: number;
+  max_score: number;
+}
+
 export interface PortalData {
   student: StudentProfile;
   grades: PortalGrade[];
   average: string | null;
+  weeklyAssessments: Record<string, WeeklyAssessment[]>;
   attendance: PortalAttendance[];
   attendanceStats: {
     present: number;
@@ -211,6 +218,11 @@ export interface PortalData {
     excused: number;
     total: number;
     percentage: number;
+  };
+  absenceLimit: {
+    used: number;
+    limit: number;
+    remaining: number;
   };
   schedule: Record<string, PortalScheduleItem[]>;
   announcements: PortalAnnouncement[];

@@ -84,24 +84,21 @@ export function StudentDashboard({ student, onLogout }: Props) {
         </div>
       </section>
 
-      {/* Tab bar */}
-      <div className="sticky top-[60px] z-20 -mx-4 overflow-x-auto border-y border-gold-500/8 bg-ink-950/70 px-4 py-2 backdrop-blur-xl md:mx-0 md:rounded-2xl md:border">
-        <div className="flex min-w-max gap-1">
+      {/* Floating tab bar — centered pill, no box */}
+      <div className="sticky top-[64px] z-20 flex justify-center py-3">
+        <div className="flex max-w-full gap-1 overflow-x-auto rounded-full border border-gold-500/15 bg-ink-900/70 p-1.5 shadow-2xl shadow-black/40 backdrop-blur-xl">
           {TABS.map((t) => {
             const active = tab === t.id;
             return (
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
-                className={`relative whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-bold transition-all duration-300 ${
-                  active ? 'text-gold-400' : 'text-slate-500 hover:text-slate-300'
+                className={`relative whitespace-nowrap rounded-full px-5 py-2 text-sm font-bold transition-all duration-300 ${
+                  active ? 'text-ink-950' : 'text-slate-500 hover:text-slate-300'
                 }`}
               >
                 {active && (
-                  <>
-                    <span className="absolute inset-0 rounded-xl border border-gold-500/25 bg-gold-500/10" />
-                    <span className="absolute bottom-0 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gold-500" />
-                  </>
+                  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-gold-400 to-gold-500 shadow-lg shadow-gold-500/25" />
                 )}
                 <span className="relative">{t.label}</span>
               </button>
