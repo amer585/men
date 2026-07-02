@@ -37,10 +37,22 @@ export function StudentDashboard({ student, onLogout }: Props) {
 
     setLoading(true);
     setError(null);
-    getStudentPortal(student.ssn_encrypted, student.grade_level)
-      .then(setData)
-      .catch((e) => setError(e instanceof Error ? e.message : 'فشل تحميل البيانات'))
-      .finally(() => setLoading(false));
+    // Retry up to 3x so a transient cold-start/DB hiccup never shows an error.
+    const fetchPortal = async (attempt = 0): Promise<void> => {
+      try {
+        const d = await getStudentPortal(student.ssn_encrypted, student.grade_level);
+        setData(d);
+      } catch (e) {
+        if (attempt < 3) {
+          await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
+          return fetchPortal(attempt + 1);
+        }
+        setError(e instanceof Error ? e.message : 'فشل تحميل البيانات');
+      } finally {
+        setLoading(false);
+      }
+    };
+    void fetchPortal();
   }, [student.ssn_encrypted, student.grade_level]);
 
   return (
@@ -50,11 +62,12 @@ export function StudentDashboard({ student, onLogout }: Props) {
         <div className="absolute -left-16 -top-16 h-48 w-48 rounded-full bg-brand-500/20 blur-3xl" />
         <div className="absolute -right-10 -bottom-20 h-48 w-48 rounded-full bg-sky-500/15 blur-3xl" />
         <div className="relative flex flex-col items-center gap-4 text-center sm:flex-row sm:text-right">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-sky-500 text-3xl shadow-xl shadow-brand-500/30 md:h-20 md:w-20 md:text-4xl">
-            {student.gender === 'F' ? '👩‍🎓' : '👨‍🎓'}
+          <div className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-sky-500 text-3xl shadow-xl shadow-brand-500/30 md:h-20 md:w-20 md:text-4xl">
+            <div className="animate-pulse-glow absolute inset-0 rounded-2xl bg-brand-400/40 blur-md" />
+            <span className="relative">{student.gender === 'F' ? '🌟' : '🚀'}</span>
           </div>
           <div className="flex-1">
-            <p className="text-xs font-semibold uppercase tracking-widest text-brand-300">مرحبًا بك</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-brand-300">إدارتنا الشاملة · مرحبًا بك</p>
             <h1 className="mt-1 text-2xl font-black text-white md:text-3xl">{student.student_name_ar || 'عزيزي الطالب'}</h1>
             <p className="mt-1 text-sm text-slate-400">{gradeLabel(student.grade_level)} · {student.school_name}</p>
           </div>

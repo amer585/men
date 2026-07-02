@@ -4,12 +4,24 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { StudentLogin } from './components/StudentLogin';
 import { StudentDashboard } from './components/StudentDashboard';
-import { StaffLogin } from './components/StaffLogin';
-import { StaffDashboard } from './components/StaffDashboard';
-import type { StudentProfile, StaffUser } from './apiService';
-import { clearStaffToken } from './config';
+import type { StudentProfile } from './apiService';
 
-type View = 'landing' | 'student-login' | 'student' | 'staff-login' | 'staff';
+type View = 'landing' | 'student-login' | 'student';
+
+const STORAGE_KEY = 'intlaqa_student';
+
+/** Load a saved student session so a page reload never kicks the user out. */
+function loadSavedStudent(): StudentProfile | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.ssn_encrypted && parsed.grade_level) return parsed;
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 function AuroraBackground() {
   return (
@@ -25,49 +37,41 @@ function AuroraBackground() {
 }
 
 export default function App() {
-  const [view, setView] = useState<View>('landing');
-  const [student, setStudent] = useState<StudentProfile | null>(null);
-  const [staff, setStaff] = useState<StaffUser | null>(null);
+  // Start from localStorage so reload keeps the user in the dashboard.
+  const [student, setStudent] = useState<StudentProfile | null>(loadSavedStudent);
+  const [view, setView] = useState<View>(loadSavedStudent() ? 'student' : 'landing');
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [view]);
 
   function onStudentLogin(profile: StudentProfile) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    } catch {
+      /* ignore */
+    }
     setStudent(profile);
     setView('student');
   }
 
-  function onStaffLogin(user: StaffUser) {
-    setStaff(user);
-    setView('staff');
-  }
-
   function logout() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
     setStudent(null);
-    setStaff(null);
-    clearStaffToken();
     setView('landing');
   }
 
   let body: ReactNode;
-  if (view === 'landing') {
-    body = (
-      <Hero
-        onStudent={() => setView('student-login')}
-        onStaff={() => setView('staff-login')}
-      />
-    );
-  } else if (view === 'student-login') {
+  if (view === 'student-login') {
     body = <StudentLogin onSuccess={onStudentLogin} onBack={() => setView('landing')} />;
   } else if (view === 'student' && student) {
     body = <StudentDashboard student={student} onLogout={logout} />;
-  } else if (view === 'staff-login') {
-    body = <StaffLogin onSuccess={onStaffLogin} onBack={() => setView('landing')} />;
-  } else if (view === 'staff' && staff) {
-    body = <StaffDashboard user={staff} onLogout={logout} />;
   } else {
-    body = <Hero onStudent={() => setView('student-login')} onStaff={() => setView('staff-login')} />;
+    body = <Hero onStudent={() => setView('student-login')} />;
   }
 
   return (
@@ -75,9 +79,9 @@ export default function App() {
       <AuroraBackground />
       <Header
         view={view}
-        onHome={() => setView('landing')}
+        onHome={() => (student ? setView('student') : setView('landing'))}
         onLogout={logout}
-        identity={student?.student_name_ar || staff?.teacher_name_ar}
+        identity={student?.student_name_ar}
       />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-6 md:py-12">{body}</main>
       <Footer />

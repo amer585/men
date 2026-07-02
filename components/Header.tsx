@@ -6,19 +6,18 @@ interface HeaderProps {
 }
 
 export function Header({ view, onHome, onLogout, identity }: HeaderProps) {
-  const loggedIn = view === 'student' || view === 'staff';
+  const loggedIn = view === 'student';
   return (
     <header className="sticky top-0 z-30 border-b border-white/5 bg-ink-950/70 backdrop-blur-xl">
-      {/* Full-width row: logo pinned to the right edge, actions to the left edge. */}
       <div className="flex w-full items-center justify-between gap-4 px-5 py-3.5 md:px-10">
         {/* Right corner — logo + brand */}
         <button onClick={onHome} className="flex items-center gap-3 transition hover:opacity-80">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-400 to-sky-500 text-xl shadow-lg shadow-brand-500/30">
-            📚
+            🛡️
           </div>
           <div className="text-right leading-tight">
-            <p className="text-base font-extrabold text-white">مدرستنا</p>
-            <p className="text-[11px] text-brand-300/80">بوابة الانطلاقة</p>
+            <p className="text-base font-extrabold text-white">إدارتنا الشاملة</p>
+            <p className="text-[11px] text-brand-300/80">بوابة الطلاب</p>
           </div>
         </button>
 
