@@ -164,14 +164,76 @@ html { background: #060a13; }
   animation: shimmer 6s linear infinite;
 }
 
-/* Buttons */
+/* Buttons — masterpiece: layered 3D depth + shine sweep + glow ring */
 .btn-gold {
-  background: linear-gradient(135deg, #d4b676, #c9a96a, #b39454);
-  box-shadow: 0 10px 30px -10px rgba(201,169,106,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #d4b676 0%, #c9a96a 50%, #b39454 100%);
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.25) inset,
+    0 -1px 0 0 rgba(0,0,0,0.15) inset,
+    0 10px 30px -8px rgba(201,169,106,0.55),
+    0 4px 12px -4px rgba(201,169,106,0.3);
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.btn-gold::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -120%;
+  width: 60%; height: 100%;
+  background: linear-gradient(105deg, transparent, rgba(255,255,255,0.5), transparent);
+  transform: skewX(-18deg);
+  transition: left 0.7s ease;
+  pointer-events: none;
 }
 .btn-gold:hover {
-  background: linear-gradient(135deg, #e3c891, #d4b676, #c9a96a);
-  box-shadow: 0 14px 40px -8px rgba(201,169,106,0.7), inset 0 1px 0 rgba(255,255,255,0.15);
+  background: linear-gradient(135deg, #e3c891 0%, #d4b676 50%, #c9a96a 100%);
+  transform: translateY(-3px);
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.35) inset,
+    0 -1px 0 0 rgba(0,0,0,0.15) inset,
+    0 18px 44px -8px rgba(201,169,106,0.65),
+    0 8px 20px -4px rgba(201,169,106,0.35);
+}
+.btn-gold:hover::before {
+  left: 130%;
+}
+.btn-gold:active {
+  transform: translateY(-1px);
+}
+
+/* Light mode button — same 3D treatment on slate-900 */
+html.light .btn-gold {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #020617 100%);
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.12) inset,
+    0 -1px 0 0 rgba(0,0,0,0.4) inset,
+    0 12px 32px -8px rgba(15, 23, 42, 0.4),
+    0 4px 12px -4px rgba(15, 23, 42, 0.25);
+}
+html.light .btn-gold:hover {
+  background: linear-gradient(135deg, #334155 0%, #1e293b 50%, #0f172a 100%);
+  transform: translateY(-3px);
+  box-shadow:
+    0 1px 0 0 rgba(255,255,255,0.15) inset,
+    0 -1px 0 0 rgba(0,0,0,0.4) inset,
+    0 20px 48px -8px rgba(15, 23, 42, 0.5);
+}
+
+/* Rotating halo ring around the logo */
+@keyframes halo-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.halo-ring {
+  animation: halo-spin 20s linear infinite;
+}
+@keyframes halo-spin-rev {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(-360deg); }
+}
+.halo-ring-rev {
+  animation: halo-spin-rev 30s linear infinite;
 }
 
 /* Hairline divider */

@@ -61,20 +61,23 @@ export function StudentDashboard({ student, onLogout }: Props) {
 
   return (
     <div className="animate-rise space-y-5">
-      {/* Profile header — luxurious */}
-      <section className="card-accent relative overflow-hidden rounded-3xl glass-strong p-6 md:p-8">
-        <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-gold-500/10 blur-3xl" />
-        <div className="absolute -left-10 -bottom-16 h-48 w-48 rounded-full bg-gold-500/[0.06] blur-2xl" />
-        <div className="relative flex flex-col items-center gap-4 text-center sm:flex-row sm:text-right">
-          <Logo size={68} glow className="shrink-0 rounded-2xl border border-gold-500/20 bg-ink-900/50 p-2.5" />
+      {/* Profile header — premium */}
+      <section className="card-accent relative overflow-hidden rounded-3xl glass-strong p-7 md:p-9">
+        <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-gold-500/[0.08] blur-3xl" />
+        <div className="absolute -left-12 -bottom-20 h-56 w-56 rounded-full bg-gold-500/[0.05] blur-2xl" />
+        <div className="relative flex flex-col items-center gap-5 text-center sm:flex-row sm:text-right">
+          <div className="relative shrink-0">
+            <div className="animate-breathe absolute inset-0 -m-2 rounded-2xl blur-md" style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.25), transparent 70%)' }} />
+            <Logo size={72} glow className="relative rounded-2xl border border-gold-500/20 bg-ink-900/50 p-2.5" />
+          </div>
           <div className="flex-1">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-500/70">إدارتنا الشاملة</p>
-            <h1 className="mt-1 text-2xl font-black text-white md:text-3xl">{student.student_name_ar || 'عزيزي الطالب'}</h1>
-            <p className="mt-1 text-sm text-slate-400">{gradeLabel(student.grade_level)} · {student.school_name}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gold-500/70">إدارتنا الشاملة</p>
+            <h1 className="mt-1.5 text-[clamp(1.5rem,4vw,2rem)] font-black tracking-tight text-white">{student.student_name_ar || 'عزيزي الطالب'}</h1>
+            <p className="mt-1.5 text-sm text-slate-400">{gradeLabel(student.grade_level)} · {student.school_name}</p>
           </div>
           <button
             onClick={onLogout}
-            className="rounded-xl border border-rose-400/15 bg-rose-500/5 px-4 py-2 text-sm font-semibold text-rose-300/90 transition hover:bg-rose-500/15"
+            className="rounded-xl border border-rose-400/15 bg-rose-500/5 px-5 py-2.5 text-sm font-semibold text-rose-300/90 transition hover:bg-rose-500/15"
           >
             خروج
           </button>

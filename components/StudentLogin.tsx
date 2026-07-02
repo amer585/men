@@ -45,14 +45,20 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
       >
         العودة للرئيسية
       </button>
-      <div className="card-accent rounded-[2rem] glass-strong p-8">
-        <div className="mb-7 text-center">
-          <Logo size={56} glow className="mx-auto rounded-2xl border border-gold-500/15 bg-ink-900/40 p-2" />
-          <h2 className="mt-4 text-2xl font-black text-white">دخول الطالب</h2>
-          <p className="mt-1 text-sm text-slate-400">أدخل رقم الطالب والصف الدراسي</p>
+      <div className="card-accent relative overflow-hidden rounded-[2rem] glass-strong p-8 md:p-10">
+        <div className="mb-8 text-center">
+          <div className="relative mx-auto mb-5 w-fit">
+            <div
+              className="animate-breathe absolute inset-0 -m-3 rounded-full blur-xl"
+              style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.3), transparent 70%)' }}
+            />
+            <Logo size={56} glow className="relative mx-auto rounded-2xl border border-gold-500/20 bg-ink-900/50 p-2.5" />
+          </div>
+          <h2 className="text-[clamp(1.75rem,4vw,2.25rem)] font-black tracking-tight text-white">دخول الطالب</h2>
+          <p className="mt-2 text-sm text-slate-400">أدخل رقم الطالب والصف الدراسي للمتابعة</p>
         </div>
 
-        <form onSubmit={submit} className="space-y-4">
+        <form onSubmit={submit} className="space-y-5">
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium text-slate-300">رقم الطالب (14 رقمًا)</span>
             <input
@@ -88,9 +94,9 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
           <button
             type="submit"
             disabled={loading}
-            className="btn-gold w-full rounded-xl py-3.5 text-base font-bold text-ink-950 transition hover:brightness-110 disabled:opacity-50"
+            className="btn-gold w-full rounded-2xl py-4 text-base font-bold disabled:opacity-50"
           >
-            {loading ? 'جارٍ التحقق…' : 'دخول'}
+            {loading ? 'جارٍ التحقق…' : 'ابدأ رحلتك ←'}
           </button>
         </form>
       </div>
