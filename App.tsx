@@ -30,18 +30,18 @@ function AuroraBackground() {
       <div className="absolute inset-0 bg-ink-950" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,#080c18,#0a0f1c_50%,#070b15)]" />
 
-      {/* ROYAL GOLD ORBS — bright, visible, moving */}
+      {/* ROYAL GOLD ORBS — bright, visible, fast-moving */}
       <div
-        className="animate-orb1 absolute right-[-10rem] top-[-12rem] h-[50rem] w-[50rem] rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(212,182,118,0.45), rgba(201,169,106,0.18) 35%, transparent 70%)' }}
+        className="animate-orb1 absolute right-[-8rem] top-[-8rem] h-[45rem] w-[45rem] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(212,182,118,0.55), rgba(201,169,106,0.22) 35%, transparent 70%)' }}
       />
       <div
-        className="animate-orb2 absolute left-[-14rem] top-[15%] h-[46rem] w-[46rem] rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(227,200,145,0.35), rgba(201,169,106,0.12) 40%, transparent 70%)' }}
+        className="animate-orb2 absolute left-[-10rem] top-[10%] h-[40rem] w-[40rem] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(227,200,145,0.45), rgba(201,169,106,0.15) 40%, transparent 70%)' }}
       />
       <div
-        className="animate-orb3 absolute bottom-[-18rem] left-[30%] h-[52rem] w-[52rem] rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.3), rgba(180,150,80,0.08) 40%, transparent 70%)' }}
+        className="animate-orb3 absolute bottom-[-12rem] left-[28%] h-[42rem] w-[42rem] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.4), rgba(180,150,80,0.1) 40%, transparent 70%)' }}
       />
 
       {/* ROYAL LIGHT RAYS — golden beams from top center */}
