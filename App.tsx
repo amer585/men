@@ -23,53 +23,132 @@ function loadSavedStudent(): StudentProfile | null {
   }
 }
 
+// Deterministic particle positions (stable across renders, no hydration issues).
+const PARTICLES = [
+  { left: '8%', size: 3, delay: 0, dur: 18 },
+  { left: '18%', size: 2, delay: 4, dur: 22 },
+  { left: '26%', size: 4, delay: 2, dur: 16 },
+  { left: '35%', size: 2, delay: 7, dur: 25 },
+  { left: '44%', size: 3, delay: 1, dur: 19 },
+  { left: '52%', size: 2, delay: 9, dur: 23 },
+  { left: '61%', size: 4, delay: 3, dur: 17 },
+  { left: '70%', size: 2, delay: 6, dur: 21 },
+  { left: '78%', size: 3, delay: 8, dur: 26 },
+  { left: '87%', size: 2, delay: 5, dur: 20 },
+  { left: '93%', size: 3, delay: 10, dur: 24 },
+  { left: '14%', size: 2, delay: 12, dur: 28 },
+  { left: '48%', size: 2, delay: 14, dur: 15 },
+  { left: '65%', size: 3, delay: 11, dur: 27 },
+];
+
 function Background() {
   return (
-    // FIXED + z-0 (NOT negative). Content wrapper uses z-10 so it's always
-    // above. This is the bulletproof pattern — no body-bg-covering trap.
     <div
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
-      style={{ background: 'linear-gradient(180deg, #080d1a 0%, #0a101e 50%, #070b15 100%)' }}
+      style={{ background: 'linear-gradient(180deg, #070c18 0%, #0a101e 45%, #080d18 100%)' }}
     >
-      {/* Orb 1 — top right, bright core ON screen */}
+      {/* Layer 1: Animated gradient mesh — slow-shifting warm gold tones */}
+      <div
+        className="animate-mesh absolute inset-0 opacity-40"
+        style={{
+          background: `
+            radial-gradient(ellipse 80% 60% at 75% 0%, rgba(201,169,106,0.12), transparent 50%),
+            radial-gradient(ellipse 60% 70% at 10% 30%, rgba(212,182,118,0.08), transparent 50%),
+            radial-gradient(ellipse 70% 50% at 50% 100%, rgba(180,150,80,0.06), transparent 50%)
+          `,
+          backgroundSize: '200% 200%, 200% 200%, 200% 200%',
+        }}
+      />
+
+      {/* Layer 2: Royal god-rays — rotating golden beams from top center */}
+      <div
+        className="animate-rays-breathe absolute left-1/2 top-[-60%]"
+        style={{ width: '150vw', height: '150vw', transform: 'translateX(-50%)' }}
+      >
+        <div
+          className="animate-rays absolute inset-0"
+          style={{
+            background: 'conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(212,182,118,0.06) 8deg, transparent 16deg, transparent 40deg, rgba(212,182,118,0.04) 48deg, transparent 56deg, transparent 80deg, rgba(212,182,118,0.05) 88deg, transparent 96deg, transparent 130deg, rgba(212,182,118,0.03) 138deg, transparent 146deg, transparent 180deg, rgba(212,182,118,0.06) 188deg, transparent 196deg, transparent 230deg, rgba(212,182,118,0.04) 238deg, transparent 246deg, transparent 280deg, rgba(212,182,118,0.05) 288deg, transparent 296deg, transparent 330deg, rgba(212,182,118,0.03) 338deg, transparent 346deg)',
+            borderRadius: '50%',
+            maskImage: 'radial-gradient(circle at 50% 50%, black 0%, transparent 60%)',
+            WebkitMaskImage: 'radial-gradient(circle at 50% 50%, black 0%, transparent 60%)',
+          }}
+        />
+      </div>
+
+      {/* Layer 3: Cinematic gold orbs — layered for depth */}
       <div
         className="animate-orb1 absolute rounded-full"
-        style={{
-          width: '500px', height: '500px', right: '-120px', top: '-80px',
-          background: 'radial-gradient(circle, rgba(227,200,145,0.6) 0%, rgba(201,169,106,0.25) 40%, transparent 70%)',
-        }}
+        style={{ width: '520px', height: '520px', right: '-100px', top: '-60px', background: 'radial-gradient(circle, rgba(231,205,150,0.5) 0%, rgba(201,169,106,0.2) 40%, transparent 70%)' }}
       />
-      {/* Orb 2 — mid left */}
       <div
         className="animate-orb2 absolute rounded-full"
-        style={{
-          width: '440px', height: '440px', left: '-100px', top: '30%',
-          background: 'radial-gradient(circle, rgba(227,200,145,0.5) 0%, rgba(201,169,106,0.18) 40%, transparent 70%)',
-        }}
+        style={{ width: '460px', height: '460px', left: '-80px', top: '28%', background: 'radial-gradient(circle, rgba(227,200,145,0.4) 0%, rgba(201,169,106,0.15) 40%, transparent 70%)' }}
       />
-      {/* Orb 3 — bottom center */}
       <div
         className="animate-orb3 absolute rounded-full"
-        style={{
-          width: '480px', height: '480px', left: '40%', bottom: '-160px',
-          background: 'radial-gradient(circle, rgba(212,182,118,0.45) 0%, rgba(201,169,106,0.12) 40%, transparent 70%)',
-        }}
+        style={{ width: '500px', height: '500px', left: '38%', bottom: '-140px', background: 'radial-gradient(circle, rgba(212,182,118,0.35) 0%, rgba(180,150,80,0.1) 40%, transparent 70%)' }}
       />
-      {/* Breathing center glow */}
+
+      {/* Layer 4: Breathing center warmth */}
       <div
         className="animate-breathe absolute rounded-full"
-        style={{
-          width: '600px', height: '600px', left: '50%', top: '45%', transform: 'translate(-50%,-50%)',
-          background: 'radial-gradient(circle, rgba(212,182,118,0.18) 0%, transparent 65%)',
-        }}
+        style={{ width: '700px', height: '700px', left: '50%', top: '42%', background: 'radial-gradient(circle, rgba(212,182,118,0.12) 0%, transparent 60%)' }}
       />
-      {/* Faint grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(201,169,106,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(201,169,106,0.04)_1px,transparent_1px)] bg-[size:48px_48px]" />
-      {/* Vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(125%_125%_at_50%_35%,transparent_45%,rgba(0,0,0,0.5)_100%)]" />
+
+      {/* Layer 5: Floating gold particles — drifting upward like embers */}
+      {PARTICLES.map((p, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            left: p.left,
+            bottom: '-10px',
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            background: 'rgba(231,205,150,0.9)',
+            boxShadow: '0 0 6px rgba(212,182,118,0.8)',
+            animation: `particleFloat ${p.dur}s linear infinite`,
+            animationDelay: `${p.delay}s`,
+          }}
+        />
+      ))}
+
+      {/* Layer 6: Twinkling static stars for depth */}
+      {STARS.map((s, i) => (
+        <div
+          key={`s${i}`}
+          className="absolute rounded-full bg-gold-300"
+          style={{
+            left: s.left, top: s.top, width: '2px', height: '2px',
+            animation: `twinkle ${s.dur}s ease-in-out infinite`,
+            animationDelay: `${s.delay}s`,
+          }}
+        />
+      ))}
+
+      {/* Layer 7: Faint institutional grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(201,169,106,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(201,169,106,0.035)_1px,transparent_1px)] bg-[size:52px_52px]" />
+
+      {/* Layer 8: Top edge glow */}
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-gold-500/[0.06] to-transparent" />
+
+      {/* Layer 9: Vignette for cinematic depth */}
+      <div className="absolute inset-0 bg-[radial-gradient(130%_120%_at_50%_40%,transparent_40%,rgba(0,0,0,0.5)_100%)]" />
     </div>
   );
 }
+
+const STARS = [
+  { left: '12%', top: '15%', dur: 4, delay: 0 },
+  { left: '88%', top: '22%', dur: 5, delay: 2 },
+  { left: '30%', top: '8%', dur: 3.5, delay: 1 },
+  { left: '62%', top: '12%', dur: 4.5, delay: 3 },
+  { left: '8%', top: '55%', dur: 6, delay: 1.5 },
+  { left: '92%', top: '48%', dur: 5, delay: 0.5 },
+  { left: '45%', top: '75%', dur: 4, delay: 2.5 },
+  { left: '72%', top: '68%', dur: 5.5, delay: 4 },
+];
 
 export default function App() {
   // Start from localStorage so reload keeps the user in the dashboard.
