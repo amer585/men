@@ -1,86 +1,79 @@
-import React from 'react';
-import { CalendarClock, GraduationCap, LayoutGrid, ShieldCheck } from 'lucide-react';
-import { Illustration } from './Illustration';
-
 interface HeroProps {
-  onLogin: () => void;
+  onStudent: () => void;
+  onStaff: () => void;
 }
 
-const serviceCards = [
-  {
-    icon: ShieldCheck,
-    title: 'متابعة الحضور والانضباط',
-    description: 'عرض آخر 30 يوماً دراسياً مع رصيد الغياب والتنبيهات الرسمية للطالب.',
-  },
-  {
-    icon: LayoutGrid,
-    title: 'جدول يومي بتوقيت الحصص',
-    description: 'حصة بحصة مع أسماء المواد والمعلمين والقاعات طوال أيام الأسبوع.',
-  },
-  {
-    icon: CalendarClock,
-    title: 'تقييمات وإشعارات المدرسة',
-    description: 'الدرجات الشهرية، التقييمات الأسبوعية، والتنبيهات المهمة من إدارة المدرسة.',
-  },
+const FEATURES = [
+  { icon: '🎓', title: 'بوابة الطلاب', desc: 'متابعة البيانات الدراسية والدرجات بسهولة وأمان.' },
+  { icon: '🏫', title: 'إدارة المدارس', desc: 'تسجيل الطلاب وإدخال الدرجات وإدارة الفصول.' },
+  { icon: '🛡️', title: 'حماية متقدمة', desc: 'مصادقة مشفّرة (JWT + bcrypt) وصلاحيات دقيقة.' },
+  { icon: '⚡', title: 'أداء فائق', desc: 'قاعدة بيانات PostgreSQL وطبقة تخزين مؤقت Redis.' },
 ];
 
-export const Hero: React.FC<HeroProps> = ({ onLogin }) => {
+const STATS = [
+  { value: '12', label: 'صف دراسي' },
+  { value: '27', label: 'محافظة' },
+  { value: '99.9%', label: 'وقت التشغيل' },
+  { value: 'REST', label: 'واجهة برمجية' },
+];
+
+export function Hero({ onStudent, onStaff }: HeroProps) {
   return (
-    <div className="space-y-8 py-6 lg:py-10 animate-in fade-in duration-700">
-      <div className="grid items-start gap-8 lg:grid-cols-[1.08fr_.92fr] lg:gap-10">
-        <div className="space-y-6 text-right">
-          <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-4 py-2 text-xs font-bold text-blue-700 shadow-sm backdrop-blur-sm dark:border-blue-800 dark:bg-slate-900/80 dark:text-blue-300">
-            <GraduationCap className="h-4 w-4" />
-            بوابة المرحلة الإعدادية في المدارس المصرية
-          </div>
-
-          <div className="space-y-4">
-            <h1 className="text-4xl font-extrabold leading-tight text-slate-900 dark:text-white lg:text-6xl">
-              متابعة الطالب اليومية من
-              <span className="bg-gradient-to-l from-blue-600 to-cyan-500 bg-clip-text text-transparent dark:from-blue-300 dark:to-cyan-200">
-                {' '}
-                الحضور حتى الدرجات
-              </span>
-            </h1>
-
-            <p className="max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300">
-              تعرض المنصة بيانات الطالب المدرسية بشكل واضح وممتلئ: المواد الأساسية للمرحلة الإعدادية، التقييمات
-              الأسبوعية، الامتحانات الشهرية، الجدول الدراسي بتوقيت الحصص، والتنبيهات الرسمية من المدرسة.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-end gap-3">
+    <div className="animate-rise">
+      {/* Headline */}
+      <section className="relative overflow-hidden rounded-[2rem] glass-strong p-8 text-center md:p-14">
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-brand-500/20 blur-3xl" />
+        <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl" />
+        <div className="relative">
+          <span className="inline-flex items-center gap-2 rounded-full border border-brand-400/30 bg-brand-500/10 px-4 py-1.5 text-xs font-semibold text-brand-300">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-brand-400" />
+            النظام يعمل الآن · PostgreSQL + Redis
+          </span>
+          <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-black leading-tight text-white md:text-6xl">
+            منصة <span className="text-gradient">مدرستنا</span> التعليمية
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base text-slate-300 md:text-lg">
+            بوابة موحّدة للطلاب والمدرسين والإدارة — سجّل الدخول لمتابعة بياناتك الدراسية،
+            أو أدِر فصولك ودرجات طلابك من مكان واحد.
+          </p>
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <button
-              onClick={onLogin}
-              className="rounded-2xl bg-slate-900 px-8 py-4 text-lg font-bold text-white shadow-xl shadow-slate-300/20 transition-all hover:-translate-y-0.5 hover:shadow-2xl dark:bg-white dark:text-slate-900 dark:shadow-none"
+              onClick={onStudent}
+              className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-500 to-emerald-600 px-8 py-4 text-base font-bold text-white shadow-xl shadow-brand-500/30 transition hover:shadow-brand-500/50 hover:brightness-110 sm:w-auto"
             >
-              الدخول إلى بيانات الطالب
+              🎓 دخول الطالب
+              <span className="transition group-hover:-translate-x-1">←</span>
             </button>
-            <div className="rounded-2xl border border-slate-200 bg-white/80 px-5 py-3 text-sm font-medium text-slate-600 shadow-sm backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-300">
-              تسجيل بالرقم القومي والمرحلة الدراسية للوصول إلى التفاصيل الكاملة
-            </div>
+            <button
+              onClick={onStaff}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-8 py-4 text-base font-bold text-slate-100 backdrop-blur transition hover:bg-white/10 sm:w-auto"
+            >
+              🏫 دخول المدرّس / الإدارة
+            </button>
           </div>
         </div>
+      </section>
 
-        <div className="flex justify-center lg:justify-end">
-          <Illustration />
-        </div>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-3">
-        {serviceCards.map((card) => (
-          <div
-            key={card.title}
-            className="rounded-[2rem] border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur-sm transition-transform hover:-translate-y-1 dark:border-slate-800 dark:bg-slate-900/80"
-          >
-            <div className="mb-4 inline-flex rounded-2xl bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300">
-              <card.icon className="h-5 w-5" />
-            </div>
-            <h3 className="mb-2 text-lg font-bold text-slate-900 dark:text-white">{card.title}</h3>
-            <p className="text-sm leading-7 text-slate-600 dark:text-slate-300">{card.description}</p>
+      {/* Stats */}
+      <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {STATS.map((s) => (
+          <div key={s.label} className="rounded-2xl glass p-4 text-center">
+            <p className="text-2xl font-black text-white md:text-3xl">{s.value}</p>
+            <p className="mt-1 text-xs text-slate-400">{s.label}</p>
           </div>
         ))}
-      </div>
+      </section>
+
+      {/* Features */}
+      <section className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {FEATURES.map((f) => (
+          <div key={f.title} className="group rounded-2xl glass p-5 transition hover:border-brand-400/30 hover:bg-white/[0.06]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-2xl">{f.icon}</div>
+            <h3 className="mt-4 font-bold text-white">{f.title}</h3>
+            <p className="mt-1.5 text-sm text-slate-400">{f.desc}</p>
+          </div>
+        ))}
+      </section>
     </div>
   );
-};
+}

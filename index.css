@@ -1,88 +1,76 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-/* === Theme Configuration (replaces tailwind.config.js in v4) === */
 @theme {
-  --font-sans: 'Cairo', sans-serif;
+  --font-sans: 'Cairo', ui-sans-serif, system-ui, sans-serif;
 
-  --color-brand-blue: #1e88e5;
-  --color-brand-dark: #0f172a;
-  --color-brand-light: #f8fafc;
-  --color-brand-card: #cceeff;
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-200: #a7f3d0;
+  --color-brand-300: #6ee7b7;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+  --color-brand-900: #064e3b;
 
-  --animate-blob: blob 7s infinite;
-  --animate-shimmer: shimmer 2s linear infinite;
+  --color-ink-950: #060b18;
+  --color-ink-900: #0b1326;
+  --color-ink-800: #131d36;
+  --color-ink-700: #1e2a4a;
 
-  @keyframes blob {
-    0% { transform: translate(0px, 0px) scale(1); }
-    33% { transform: translate(30px, -50px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-    100% { transform: translate(0px, 0px) scale(1); }
-  }
-
-  @keyframes shimmer {
-    from { background-position: 0 0; }
-    to { background-position: -200% 0; }
-  }
+  --animate-blob: blob 18s infinite ease-in-out;
+  --animate-float: float 6s infinite ease-in-out;
+  --animate-rise: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* === Dark Mode === */
-@custom-variant dark (&:where(.dark, .dark *));
+@keyframes blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-/* === Base Styles === */
+html { scroll-behavior: smooth; }
+
 body {
-  font-family: 'Cairo', sans-serif;
+  font-family: var(--font-sans);
+  background: var(--color-ink-950);
+  color: #e8edf7;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-.dark ::-webkit-scrollbar-thumb {
-  background: #334155;
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+.glass {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Loading Spinner Styles */
-.initial-loader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  width: 100vw;
-  background-color: #f8fafc;
-}
-.dark .initial-loader {
-  background-color: #0f172a;
-}
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid rgba(30, 136, 229, 0.3);
-  border-radius: 50%;
-  border-top-color: #1e88e5;
-  animation: spin 1s ease-in-out infinite;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.glass-strong {
+  background: rgba(19, 29, 54, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Animation delay utilities */
-.animation-delay-2000 {
-  animation-delay: 2s;
+.text-gradient {
+  background: linear-gradient(120deg, #34d399 0%, #38bdf8 50%, #818cf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
+
+.delay-2000 { animation-delay: 2s; }
+.delay-4000 { animation-delay: 4s; }

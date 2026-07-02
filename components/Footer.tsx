@@ -1,11 +1,14 @@
-import React from 'react';
+import { API_BASE_URL } from '../config';
 
-export const Footer: React.FC = () => {
+export function Footer() {
   return (
-    <footer className="w-full py-8 border-t border-gray-100 mt-auto">
-      <div className="container mx-auto px-6 text-center text-slate-500 font-medium">
-        <p dir="ltr">Powered by <span className="font-bold text-slate-700">مصنع الرجال</span></p>
+    <footer className="border-t border-white/5 bg-ink-950/40">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-6 text-center text-xs text-slate-500 md:flex-row md:px-6 md:text-right">
+        <p>© {new Date().getFullYear()} منصة مدرستنا — جميع الحقوق محفوظة</p>
+        <p className="font-mono text-[11px] text-slate-600">
+          API: {API_BASE_URL.replace(/^https?:\/\//, '')}
+        </p>
       </div>
     </footer>
   );
-};
+}

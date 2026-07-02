@@ -1,16 +1,6 @@
-import { API_BASE_URL } from './config';
+import { API_BASE_URL, getStaffToken } from './config';
 
-// --- Types ---
-export interface AddStudentPayload {
-  ssn_encrypted: string;
-  student_name_ar: string;
-  gender: string;
-  gov_code: string;
-  admin_zone: string;
-  school_name: string;
-  grade_level: number;
-  class_name: string;
-}
+// --- Types matching the backend contract ---
 
 export interface StudentProfile {
   ssn_encrypted: string;
@@ -23,75 +13,150 @@ export interface StudentProfile {
   gender: string;
 }
 
-export interface LogActionPayload {
-  ssn_encrypted: string;
-  grade_level: number;
-  action_type: number;
-  metadata?: Record<string, unknown>;
+export interface StaffUser {
+  name: string;
+  teacher_name_ar: string;
+  role: string;
+  gov_code: string;
+  admin_zone: string;
+  school_name: string;
 }
 
-// Action type constants (match backend TINYINT mapping)
+export interface School {
+  school_name: string;
+  admin_zone: string;
+  gov_code: string;
+}
+
+export interface ClassInfo {
+  class_name: string;
+  grade_level: number;
+  student_count: number;
+}
+
+export interface StudentGrade {
+  subject_name: string;
+  grade_value: string;
+  teacher_id: number | null;
+  updated_at: string | null;
+}
+
+export interface RosterStudent {
+  ssn_encrypted: string;
+  student_name_ar: string;
+  gender: string;
+  grades: StudentGrade[];
+}
+
+export interface AddStudentPayload {
+  ssn_encrypted: string;
+  student_name_ar: string;
+  gender: string;
+  gov_code: string;
+  admin_zone: string;
+  school_name: string;
+  grade_level: number;
+  class_name: string;
+}
+
 export const ACTION_TYPES = {
   LOGIN: 1,
   LOGOUT: 2,
   VIEW_PROFILE: 3,
   VIEW_GRADES: 4,
-  VIEW_ATTENDANCE: 5,
-  VIEW_SCHEDULE: 6,
-  TEACHER_LOGIN: 10,
-  TEACHER_GRADE_ENTRY: 11,
-  TEACHER_ATTENDANCE_ENTRY: 12,
 } as const;
 
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-}
+// --- Generic request helper ---
 
-// --- Helper ---
-async function request<T>(
-  endpoint: string,
-  method: 'POST',
-  body: Record<string, unknown>
-): Promise<ApiResponse<T>> {
-  try {
-    const apiBaseUrl = API_BASE_URL.replace(/\/$/, '');
-    const res = await fetch(`${apiBaseUrl}/${endpoint}`, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      return { success: false, error: data.error || `HTTP ${res.status}` };
-    }
-    return { success: true, data };
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Network error';
-    console.error(`[API] ${endpoint} failed:`, message);
-    return { success: false, error: message };
+class ApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
   }
 }
 
-// --- Endpoints ---
+async function request<T>(
+  endpoint: string,
+  options: { method: 'GET' | 'POST'; body?: unknown; auth?: boolean } = { method: 'GET' },
+): Promise<T> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (options.auth) {
+    const token = getStaffToken();
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+  }
 
-/** Add / update a student record */
-export async function addStudent(payload: AddStudentPayload): Promise<ApiResponse> {
-  return request('addStudent', 'POST', payload as unknown as Record<string, unknown>);
+  const res = await fetch(`${API_BASE_URL}/${endpoint}`, {
+    method: options.method,
+    headers,
+    body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new ApiError(res.status, (data && (data.error || data.message)) || `HTTP ${res.status}`);
+  }
+  return data as T;
 }
 
-/** Login: fetch student profile by SSN + grade */
-export async function studentLogin(ssn_encrypted: string, grade_level: number): Promise<ApiResponse<{ student: StudentProfile }>> {
-  return request('studentLogin', 'POST', { ssn_encrypted, grade_level });
+// --- Student endpoints ---
+
+export async function studentLogin(
+  ssn_encrypted: string,
+  grade_level: number,
+): Promise<{ message: string; student: StudentProfile }> {
+  return request('studentLogin', { method: 'POST', body: { ssn_encrypted, grade_level } });
 }
 
-/** Log a single action */
-export async function logAction(payload: LogActionPayload): Promise<ApiResponse> {
-  return request('logAction', 'POST', payload as unknown as Record<string, unknown>);
+// --- Staff endpoints ---
+
+export async function staffLogin(
+  username: string,
+  password: string,
+): Promise<{ success: boolean; token: string; user: StaffUser }> {
+  return request('login', { method: 'POST', body: { username, password } });
 }
 
-/** Log multiple actions in one batch (saves ~10x RUs) */
-export async function logActionBatch(actions: LogActionPayload[]): Promise<ApiResponse> {
-  return request('logAction', 'POST', { actions } as unknown as Record<string, unknown>);
+export async function getSchools(): Promise<{ schools: School[] }> {
+  return request('hierarchy/schools', { method: 'GET', auth: true });
+}
+
+export async function getClasses(
+  school_name: string,
+  grade_level?: number,
+): Promise<{ classes: ClassInfo[] }> {
+  const qs = grade_level ? `?school_name=${encodeURIComponent(school_name)}&grade_level=${grade_level}` : `?school_name=${encodeURIComponent(school_name)}`;
+  return request(`hierarchy/classes${qs}`, { method: 'GET', auth: true });
+}
+
+export async function getRoster(
+  school_name: string,
+  grade_level: number,
+  class_name: string,
+  subject_name?: string,
+): Promise<{ students: RosterStudent[] }> {
+  const params = new URLSearchParams({ school_name, grade_level: String(grade_level), class_name });
+  if (subject_name) params.set('subject_name', subject_name);
+  return request(`hierarchy/students?${params}`, { method: 'GET', auth: true });
+}
+
+export async function updateGrades(
+  entries: Array<{ ssn_encrypted: string; grade_value: string }>,
+  meta: { grade_level: number; class_name: string; subject_name: string },
+): Promise<{ message: string; updated: number }> {
+  return request('grades/update', {
+    method: 'POST',
+    auth: true,
+    body: entries.map((e) => ({ ...e, ...meta })),
+  });
+}
+
+export async function addStudent(payload: AddStudentPayload): Promise<{ message: string; affectedRows: number }> {
+  return request('addStudent', { method: 'POST', auth: true, body: payload });
+}
+
+export async function logAction(payload: {
+  ssn_encrypted: string;
+  grade_level: number;
+  action_type: number;
+}): Promise<{ message: string; total_inserted: number }> {
+  return request('logAction', { method: 'POST', body: payload });
 }
