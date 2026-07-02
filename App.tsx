@@ -27,12 +27,16 @@ function AuroraBackground() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
       <div className="absolute inset-0 bg-ink-950" />
-      {/* Subtle, formal gold radial glow — no neon */}
-      <div className="absolute inset-0 bg-[radial-gradient(55rem_55rem_at_88%_-8%,rgba(201,169,106,0.10),transparent),radial-gradient(45rem_45rem_at_-8%_8%,rgba(201,169,106,0.05),transparent)]" />
-      {/* Faint institutional grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(201,169,106,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(201,169,106,0.025)_1px,transparent_1px)] bg-[size:40px_40px]" />
+      {/* Large luxurious gold glow — top right */}
+      <div className="absolute inset-0 bg-[radial-gradient(80rem_80rem_at_85%_-12%,rgba(201,169,106,0.18),transparent_55%),radial-gradient(60rem_60rem_at_-10%_5%,rgba(201,169,106,0.09),transparent_60%)]" />
+      {/* Secondary warm glow — bottom center for depth */}
+      <div className="absolute inset-0 bg-[radial-gradient(50rem_50rem_at_50%_110%,rgba(201,169,106,0.07),transparent_55%)]" />
+      {/* Subtle institutional grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(201,169,106,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(201,169,106,0.03)_1px,transparent_1px)] bg-[size:44px_44px]" />
+      {/* Diagonal sheen lines for luxury texture */}
+      <div className="absolute inset-0 opacity-[0.015] bg-[repeating-linear-gradient(135deg,transparent,transparent_100px,rgba(201,169,106,1)_100px,rgba(201,169,106,1)_101px)]" />
       {/* Vignette for depth */}
-      <div className="absolute inset-0 bg-[radial-gradient(120%_120%_at_50%_0%,transparent_60%,rgba(0,0,0,0.5)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(120%_120%_at_50%_0%,transparent_55%,rgba(0,0,0,0.6)_100%)]" />
     </div>
   );
 }
