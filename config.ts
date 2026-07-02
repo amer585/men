@@ -1,12 +1,33 @@
-// API base URL. Defaults to a RELATIVE path ("/api") so the frontend works when
-// served from the backend on the same origin (no CORS issues). Override with
-// VITE_API_BASE_URL only when running the frontend on a separate host.
+// API base URL — bulletproof across hosting setups.
+//
+// The backend lives at the Hugging Face Space. If the frontend is served FROM
+// the backend (same origin), we use a relative "/api" path. If it's hosted
+// somewhere else (e.g. Cloudflare Pages), we MUST point at the absolute backend
+// URL — otherwise fetch hits the static host, which returns 405.
+//
+// Priority:
+//   1. VITE_API_BASE_URL (explicit override, e.g. for local dev)
+//   2. same-origin relative "/api" (frontend served by the backend)
+//   3. absolute backend URL (frontend hosted elsewhere)
+
+const BACKEND_ORIGIN = 'https://amer21-mcp.hf.space';
+
 const configured = import.meta.env.VITE_API_BASE_URL?.trim();
 
-export const API_BASE_URL =
-  configured && configured.length > 0
-    ? configured.replace(/\/$/, '')
-    : '/api';
+function resolveApiBaseUrl(): string {
+  // 1. Explicit override wins.
+  if (configured && configured.length > 0) {
+    return configured.replace(/\/$/, '');
+  }
+  // 2. Same origin as the backend → relative path (fastest, no CORS needed).
+  if (typeof window !== 'undefined' && window.location.origin === BACKEND_ORIGIN) {
+    return '/api';
+  }
+  // 3. Hosted elsewhere (Cloudflare Pages, localhost, etc.) → absolute URL.
+  return `${BACKEND_ORIGIN}/api`;
+}
+
+export const API_BASE_URL = resolveApiBaseUrl();
 
 const TOKEN_KEY = 'intlaqa_staff_token';
 
