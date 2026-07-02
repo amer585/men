@@ -1,11 +1,12 @@
-// API base URL — points at the Hugging Face Space by default.
-// Override locally with a .env file: VITE_API_BASE_URL=http://localhost:7860/api
+// API base URL. Defaults to a RELATIVE path ("/api") so the frontend works when
+// served from the backend on the same origin (no CORS issues). Override with
+// VITE_API_BASE_URL only when running the frontend on a separate host.
 const configured = import.meta.env.VITE_API_BASE_URL?.trim();
 
 export const API_BASE_URL =
   configured && configured.length > 0
     ? configured.replace(/\/$/, '')
-    : 'https://amer21-mcp.hf.space/api';
+    : '/api';
 
 const TOKEN_KEY = 'intlaqa_staff_token';
 

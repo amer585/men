@@ -13,11 +13,16 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Core login call shared by the normal form and the demo button.
-  async function performLogin(loginSsn: string) {
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!/^\d{14}$/.test(ssn)) {
+      setError('رقم الطالب يجب أن يكون 14 رقمًا.');
+      return;
+    }
     setLoading(true);
     try {
-      const { student } = await studentLogin(loginSsn, Number(grade));
+      const { student } = await studentLogin(ssn, Number(grade));
       // Fire-and-forget activity log (does not block login).
       void logAction({
         ssn_encrypted: student.ssn_encrypted,
@@ -30,24 +35,6 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
     } finally {
       setLoading(false);
     }
-  }
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    if (!/^\d{14}$/.test(ssn)) {
-      setError('رقم الطالب يجب أن يكون 14 رقمًا.');
-      return;
-    }
-    await performLogin(ssn);
-  }
-
-  // Demo login: enter without a real SSN (uses the test account on the backend,
-  // which must have ALLOW_TEST_LOGIN=true enabled).
-  async function demoLogin() {
-    setError(null);
-    setSsn('11111111111111');
-    await performLogin('11111111111111');
   }
 
   return (
@@ -108,21 +95,6 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
             {loading ? 'جارٍ التحقق…' : 'دخول'}
           </button>
         </form>
-
-        <div className="my-4 flex items-center gap-3 text-xs text-slate-500">
-          <span className="h-px flex-1 bg-white/10" />
-          أو
-          <span className="h-px flex-1 bg-white/10" />
-        </div>
-
-        <button
-          type="button"
-          onClick={demoLogin}
-          disabled={loading}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10 disabled:opacity-50"
-        >
-          <span>🚀</span> دخول تجريبي (بدون رقم طالب)
-        </button>
       </div>
     </div>
   );
