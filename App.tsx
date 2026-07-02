@@ -26,40 +26,50 @@ function loadSavedStudent(): StudentProfile | null {
 function AuroraBackground() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {/* Base navy */}
+      {/* Base — slightly warmer navy so gold pops */}
       <div className="absolute inset-0 bg-ink-950" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,#080c18,#0a0f1c_50%,#070b15)]" />
 
-      {/* Layer 1: animated floating golden orbs (the living glow) */}
+      {/* ROYAL GOLD ORBS — bright, visible, moving */}
       <div
-        className="animate-orb1 absolute right-[-8rem] top-[-10rem] h-[42rem] w-[42rem] rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.22), rgba(201,169,106,0.08) 40%, transparent 70%)', filter: 'blur(40px)' }}
+        className="animate-orb1 absolute right-[-10rem] top-[-12rem] h-[50rem] w-[50rem] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(212,182,118,0.45), rgba(201,169,106,0.18) 35%, transparent 70%)' }}
       />
       <div
-        className="animate-orb2 absolute left-[-12rem] top-[20%] h-[38rem] w-[38rem] rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.15), rgba(201,169,106,0.05) 40%, transparent 70%)', filter: 'blur(50px)' }}
+        className="animate-orb2 absolute left-[-14rem] top-[15%] h-[46rem] w-[46rem] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(227,200,145,0.35), rgba(201,169,106,0.12) 40%, transparent 70%)' }}
       />
       <div
-        className="animate-orb3 absolute bottom-[-15rem] left-[25%] h-[44rem] w-[44rem] rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.12), rgba(201,169,106,0.04) 40%, transparent 70%)', filter: 'blur(60px)' }}
+        className="animate-orb3 absolute bottom-[-18rem] left-[30%] h-[52rem] w-[52rem] rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.3), rgba(180,150,80,0.08) 40%, transparent 70%)' }}
       />
 
-      {/* Layer 2: central breathing warmth */}
+      {/* ROYAL LIGHT RAYS — golden beams from top center */}
       <div
-        className="animate-breathe absolute left-1/2 top-1/3 h-[50rem] w-[50rem] -translate-x-1/2 rounded-full"
-        style={{ background: 'radial-gradient(circle, rgba(201,169,106,0.06), transparent 60%)' }}
+        className="absolute left-1/2 top-[-20%] h-[80vh] w-[60vw] -translate-x-1/2"
+        style={{
+          background: 'conic-gradient(from 270deg at 50% 0%, transparent 35deg, rgba(212,182,118,0.12) 45deg, rgba(212,182,118,0.04) 55deg, transparent 65deg, transparent 85deg, rgba(212,182,118,0.08) 95deg, transparent 105deg)',
+          animation: 'breathe 12s ease-in-out infinite',
+        }}
       />
 
-      {/* Layer 3: static ambient glows for richness */}
-      <div className="absolute inset-0 bg-[radial-gradient(60rem_60rem_at_50%_-10%,rgba(201,169,106,0.06),transparent_50%)]" />
+      {/* Central breathing warmth */}
+      <div
+        className="animate-breathe absolute left-1/2 top-[40%] h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{ background: 'radial-gradient(circle, rgba(212,182,118,0.12), transparent 65%)' }}
+      />
 
-      {/* Layer 4: subtle institutional grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(201,169,106,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(201,169,106,0.035)_1px,transparent_1px)] bg-[size:48px_48px]" />
+      {/* Faint institutional grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(201,169,106,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(201,169,106,0.04)_1px,transparent_1px)] bg-[size:52px_52px]" />
 
-      {/* Layer 5: diagonal luxury sheen */}
-      <div className="absolute inset-0 opacity-[0.02] bg-[repeating-linear-gradient(135deg,transparent,transparent_120px,rgba(201,169,106,1)_120px,rgba(201,169,106,1)_121px)]" />
+      {/* Diagonal luxury sheen */}
+      <div className="absolute inset-0 opacity-[0.03] bg-[repeating-linear-gradient(135deg,transparent,transparent_140px,rgba(212,182,118,1)_140px,rgba(212,182,118,1)_141px)]" />
 
-      {/* Layer 6: vignette for depth */}
-      <div className="absolute inset-0 bg-[radial-gradient(130%_130%_at_50%_0%,transparent_50%,rgba(0,0,0,0.55)_100%)]" />
+      {/* Top gold edge glow */}
+      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-gold-500/[0.08] to-transparent" />
+
+      {/* Vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(130%_130%_at_50%_30%,transparent_45%,rgba(0,0,0,0.5)_100%)]" />
     </div>
   );
 }
