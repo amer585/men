@@ -10,7 +10,7 @@
 //   2. same-origin relative "/api" (frontend served by the backend)
 //   3. absolute backend URL (frontend hosted elsewhere)
 
-const BACKEND_ORIGIN = 'https://amer21-mcp.hf.space';
+const BACKEND_ORIGIN = 'https://amer585-intlaqa-backend.hf.space';
 
 const configured = (import.meta as any).env.VITE_API_BASE_URL?.trim();
 
