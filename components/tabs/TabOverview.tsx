@@ -1,4 +1,4 @@
-import type { StudentProfile, PortalData } from '../apiService';
+import type { StudentProfile, PortalData } from '../../apiService';
 
 interface Props {
   student: StudentProfile;

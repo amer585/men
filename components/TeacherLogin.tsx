@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { teacherLogin, type TeacherAccount } from '../apiService';
 import { setTeacherToken } from '../config';
 import { Logo } from './Logo';

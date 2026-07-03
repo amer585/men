@@ -12,19 +12,15 @@
 
 const BACKEND_ORIGIN = 'https://amer21-mcp.hf.space';
 
-const configured = import.meta.env.VITE_API_BASE_URL?.trim();
+const configured = (import.meta as any).env.VITE_API_BASE_URL?.trim();
 
 function resolveApiBaseUrl(): string {
   // 1. Explicit override wins.
   if (configured && configured.length > 0) {
     return configured.replace(/\/$/, '');
   }
-  // 2. Same origin as the backend → relative path (fastest, no CORS needed).
-  if (typeof window !== 'undefined' && window.location.origin === BACKEND_ORIGIN) {
-    return '/api';
-  }
-  // 3. Hosted elsewhere (Cloudflare Pages, localhost, etc.) → absolute URL.
-  return `${BACKEND_ORIGIN}/api`;
+  // 2. Default to same-origin relative path for full-stack integration
+  return '/api';
 }
 
 export const API_BASE_URL = resolveApiBaseUrl();

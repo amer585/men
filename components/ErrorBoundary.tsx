@@ -10,6 +10,7 @@ interface State {
  * whole screen. Shows a friendly message instead of a black screen.
  */
 export class ErrorBoundary extends Component<{ children: ReactNode }, State> {
+  props: { children: ReactNode };
   state: State = { hasError: false, message: '' };
 
   static getDerivedStateFromError(error: Error): State {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { studentLogin, logAction, ACTION_TYPES, type StudentProfile } from '../apiService';
 import { GRADE_LABELS } from '../schoolData';
 import { Logo } from './Logo';
