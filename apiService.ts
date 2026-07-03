@@ -1,4 +1,4 @@
-import { API_BASE_URL, getStaffToken } from './config';
+import { API_BASE_URL, getStaffToken, getTeacherToken } from './config';
 
 // --- Types matching the backend contract ---
 
@@ -76,10 +76,13 @@ class ApiError extends Error {
 
 async function request<T>(
   endpoint: string,
-  options: { method: 'GET' | 'POST'; body?: unknown; auth?: boolean } = { method: 'GET' },
+  options: { method: 'GET' | 'POST' | 'PATCH'; body?: unknown; auth?: boolean | 'staff' | 'teacher' } = { method: 'GET' },
 ): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  if (options.auth) {
+  if (options.auth === 'teacher') {
+    const token = getTeacherToken();
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+  } else if (options.auth) {
     const token = getStaffToken();
     if (token) headers['Authorization'] = `Bearer ${token}`;
   }
@@ -234,4 +237,63 @@ export async function getStudentPortal(
 ): Promise<PortalData> {
   const qs = `?ssn_encrypted=${encodeURIComponent(ssn_encrypted)}&grade_level=${grade_level}`;
   return request(`student/portal${qs}`, { method: 'GET' });
+}
+
+// --- Teacher account (email self-registration → admin approval → JWT) ---
+
+export interface TeacherAccount {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  subject: string | null;
+  is_verified: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LinkedStudent {
+  student_id: string;
+  student_name_ar: string | null;
+  school_name: string | null;
+  grade_level: number;
+  class_name: string | null;
+  linked_at: string;
+}
+
+export async function teacherRegister(payload: {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+  subject?: string;
+}): Promise<{ message: string; account: TeacherAccount }> {
+  return request('teacher/register', { method: 'POST', body: payload });
+}
+
+export async function teacherLogin(
+  email: string,
+  password: string,
+): Promise<{ success: boolean; token: string; account: TeacherAccount }> {
+  return request('teacher/login', { method: 'POST', body: { email, password } });
+}
+
+export async function getTeacherProfile(): Promise<TeacherAccount> {
+  return request('teacher/profile', { method: 'GET', auth: 'teacher' });
+}
+
+export async function updateTeacherProfile(payload: {
+  name?: string;
+  phone?: string;
+  subject?: string;
+}): Promise<{ message: string; account: TeacherAccount }> {
+  return request('teacher/profile', { method: 'PATCH', auth: 'teacher', body: payload });
+}
+
+export async function getTeacherStudents(): Promise<{ teacher_id: string; students: LinkedStudent[] }> {
+  return request('teacher/students', { method: 'GET', auth: 'teacher' });
+}
+
+export async function linkStudent(student_id: string): Promise<{ message: string; teacher_id: string; student_id: string }> {
+  return request('teacher/students', { method: 'POST', auth: 'teacher', body: { student_id } });
 }

@@ -4,12 +4,23 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { StudentLogin } from './components/StudentLogin';
 import { StudentDashboard } from './components/StudentDashboard';
-import type { StudentProfile } from './apiService';
+import { TeacherLogin } from './components/TeacherLogin';
+import { TeacherRegister } from './components/TeacherRegister';
+import { TeacherDashboard } from './components/TeacherDashboard';
+import type { StudentProfile, TeacherAccount } from './apiService';
+import { clearTeacherToken } from './config';
 
-type View = 'landing' | 'student-login' | 'student';
+type View =
+  | 'landing'
+  | 'student-login'
+  | 'student'
+  | 'teacher-login'
+  | 'teacher-register'
+  | 'teacher';
 type Theme = 'dark' | 'light';
 
 const STORAGE_KEY = 'intlaqa_student';
+const TEACHER_STORAGE_KEY = 'intlaqa_teacher_account';
 const THEME_KEY = 'intlaqa_theme';
 
 /** Load a saved student session so a page reload never kicks the user out. */
@@ -19,6 +30,19 @@ function loadSavedStudent(): StudentProfile | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (parsed && parsed.ssn_encrypted && parsed.grade_level) return parsed;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Load a saved teacher session so a page reload keeps the teacher logged in. */
+function loadSavedTeacher(): TeacherAccount | null {
+  try {
+    const raw = localStorage.getItem(TEACHER_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.id && parsed.email) return parsed as TeacherAccount;
     return null;
   } catch {
     return null;
@@ -203,8 +227,13 @@ function LightBackground() {
 
 export default function App() {
   // Start from localStorage so reload keeps the user in the dashboard.
-  const [student, setStudent] = useState<StudentProfile | null>(loadSavedStudent);
-  const [view, setView] = useState<View>(loadSavedStudent() ? 'student' : 'landing');
+  const savedStudent = loadSavedStudent();
+  const savedTeacher = loadSavedTeacher();
+  const [student, setStudent] = useState<StudentProfile | null>(savedStudent);
+  const [teacher, setTeacher] = useState<TeacherAccount | null>(savedTeacher);
+  const [view, setView] = useState<View>(
+    savedStudent ? 'student' : savedTeacher ? 'teacher' : 'landing',
+  );
   const [theme, setTheme] = useState<Theme>(() => {
     try {
       return (localStorage.getItem(THEME_KEY) as Theme) || 'dark';
@@ -249,13 +278,57 @@ export default function App() {
     setView('landing');
   }
 
+  function onTeacherLogin(account: TeacherAccount) {
+    try {
+      localStorage.setItem(TEACHER_STORAGE_KEY, JSON.stringify(account));
+    } catch {
+      /* ignore */
+    }
+    setTeacher(account);
+    setView('teacher');
+  }
+
+  function teacherLogout() {
+    try {
+      localStorage.removeItem(TEACHER_STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+    clearTeacherToken();
+    setTeacher(null);
+    setView('landing');
+  }
+
   let body: ReactNode;
   if (view === 'student-login') {
     body = <StudentLogin onSuccess={onStudentLogin} onBack={() => setView('landing')} />;
   } else if (view === 'student' && student) {
     body = <StudentDashboard student={student} onLogout={logout} />;
+  } else if (view === 'teacher-login') {
+    body = (
+      <TeacherLogin
+        onSuccess={onTeacherLogin}
+        onBack={() => setView('landing')}
+        onRegister={() => setView('teacher-register')}
+      />
+    );
+  } else if (view === 'teacher-register') {
+    body = (
+      <TeacherRegister
+        onBack={() => setView('landing')}
+        onGoLogin={() => setView('teacher-login')}
+      />
+    );
+  } else if (view === 'teacher' && teacher) {
+    body = <TeacherDashboard account={teacher} onLogout={teacherLogout} />;
   } else {
-    body = <Hero onStudent={() => setView('student-login')} theme={theme} />;
+    body = (
+      <Hero
+        onStudent={() => setView('student-login')}
+        onTeacher={() => setView('teacher-login')}
+        theme={theme}
+      />
+    );
   }
 
   return (
@@ -266,9 +339,11 @@ export default function App() {
           view={view}
           theme={theme}
           onToggleTheme={toggleTheme}
-          onHome={() => (student ? setView('student') : setView('landing'))}
-          onLogout={logout}
-          identity={student?.student_name_ar}
+          onHome={() =>
+            student ? setView('student') : teacher ? setView('teacher') : setView('landing')
+          }
+          onLogout={view === 'teacher' ? teacherLogout : logout}
+          identity={student?.student_name_ar ?? teacher?.name}
         />
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-6 md:py-12">{body}</main>
         <Footer />

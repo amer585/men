@@ -2,10 +2,11 @@ import { Logo } from './Logo';
 
 interface HeroProps {
   onStudent: () => void;
+  onTeacher: () => void;
   theme: 'dark' | 'light';
 }
 
-export function Hero({ onStudent, theme }: HeroProps) {
+export function Hero({ onStudent, onTeacher, theme }: HeroProps) {
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center py-12 text-center">
       {/* ── Logo centerpiece: glowing crest with rotating halo rings ── */}
@@ -52,14 +53,23 @@ export function Hero({ onStudent, theme }: HeroProps) {
         في منصة رسمية موحّدة صُمّمت بعناية لطالب اليوم.
       </p>
 
-      {/* ── Premium CTA button ── */}
-      <button
-        onClick={onStudent}
-        className="btn-gold group mt-11 inline-flex items-center justify-center gap-3 rounded-2xl px-12 py-4.5 text-base font-bold"
-      >
-        <span>الدخول إلى بوابة الطلاب</span>
-        <span className="text-lg transition-transform duration-300 group-hover:-translate-x-1.5">←</span>
-      </button>
+      {/* ── Premium CTA buttons ── */}
+      <div className="mt-11 flex flex-col items-center gap-4 sm:flex-row">
+        <button
+          onClick={onStudent}
+          className="btn-gold group inline-flex items-center justify-center gap-3 rounded-2xl px-10 py-4.5 text-base font-bold"
+        >
+          <span>بوابة الطلاب</span>
+          <span className="text-lg transition-transform duration-300 group-hover:-translate-x-1.5">←</span>
+        </button>
+        <button
+          onClick={onTeacher}
+          className="group inline-flex items-center justify-center gap-3 rounded-2xl border border-gold-500/25 bg-white/[0.03] px-10 py-4.5 text-base font-bold text-gold-200 transition hover:bg-gold-500/10"
+        >
+          <span>بوابة المعلّمين</span>
+          <span className="text-lg transition-transform duration-300 group-hover:-translate-x-1.5">←</span>
+        </button>
+      </div>
 
       {/* ── Feature pills ── */}
       <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">

@@ -30,6 +30,7 @@ function resolveApiBaseUrl(): string {
 export const API_BASE_URL = resolveApiBaseUrl();
 
 const TOKEN_KEY = 'intlaqa_staff_token';
+const TEACHER_TOKEN_KEY = 'intlaqa_teacher_token';
 
 export function getStaffToken(): string | null {
   try {
@@ -50,6 +51,31 @@ export function setStaffToken(token: string): void {
 export function clearStaffToken(): void {
   try {
     localStorage.removeItem(TOKEN_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+// --- Teacher-account (email self-registration) session token ---
+export function getTeacherToken(): string | null {
+  try {
+    return localStorage.getItem(TEACHER_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setTeacherToken(token: string): void {
+  try {
+    localStorage.setItem(TEACHER_TOKEN_KEY, token);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function clearTeacherToken(): void {
+  try {
+    localStorage.removeItem(TEACHER_TOKEN_KEY);
   } catch {
     /* ignore */
   }
