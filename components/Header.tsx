@@ -10,7 +10,7 @@ interface HeaderProps {
 }
 
 export function Header({ view, theme, onToggleTheme, onHome, onLogout, identity }: HeaderProps) {
-  const loggedIn = view === 'student' || view === 'teacher';
+  const loggedIn = view === 'student' || view === 'teacher' || view === 'staff';
   return (
     <header className="sticky top-0 z-30 border-b border-gold-500/10 bg-ink-950/80 backdrop-blur-xl">
       {/* Thin gold hairline at the very top */}

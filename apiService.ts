@@ -1,4 +1,4 @@
-import { API_BASE_URL, getStaffToken, getTeacherToken } from './config';
+import { API_BASE_URL, getStaffToken, getTeacherToken, getStudentToken } from './config';
 
 // --- Types matching the backend contract ---
 
@@ -59,6 +59,44 @@ export interface AddStudentPayload {
   class_name: string;
 }
 
+export interface District {
+  district_name: string;
+}
+
+export type AttendanceStatus = 'present' | 'absent' | 'late' | 'excused';
+
+export interface AttendanceEntry {
+  ssn_encrypted: string;
+  date: string; // YYYY-MM-DD
+  status: AttendanceStatus;
+  note?: string | null;
+}
+
+export interface TeacherClassAssignment {
+  teacher_id: number;
+  username: string | null;
+  teacher_name: string | null;
+  grade_level: number;
+  class_name: string;
+  subject_name: string;
+}
+
+export interface RegisterStaffPayload {
+  username: string;
+  password: string;
+  role: string;
+  teacher_name_ar?: string;
+  gov_code?: string;
+  admin_zone?: string;
+  school_name?: string;
+}
+
+export interface AddTeacherPayload {
+  username: string;
+  password: string;
+  teacher_name_ar?: string;
+}
+
 export const ACTION_TYPES = {
   LOGIN: 1,
   LOGOUT: 2,
@@ -76,11 +114,14 @@ class ApiError extends Error {
 
 async function request<T>(
   endpoint: string,
-  options: { method: 'GET' | 'POST' | 'PATCH'; body?: unknown; auth?: boolean | 'staff' | 'teacher' } = { method: 'GET' },
+  options: { method: 'GET' | 'POST' | 'PATCH'; body?: unknown; auth?: boolean | 'staff' | 'teacher' | 'student' } = { method: 'GET' },
 ): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (options.auth === 'teacher') {
     const token = getTeacherToken();
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+  } else if (options.auth === 'student') {
+    const token = getStudentToken();
     if (token) headers['Authorization'] = `Bearer ${token}`;
   } else if (options.auth) {
     const token = getStaffToken();
@@ -111,7 +152,7 @@ async function request<T>(
 export async function studentLogin(
   ssn_encrypted: string,
   grade_level: number,
-): Promise<{ message: string; student: StudentProfile }> {
+): Promise<{ message: string; student: StudentProfile; token: string }> {
   return request('studentLogin', { method: 'POST', body: { ssn_encrypted, grade_level } });
 }
 
@@ -162,12 +203,67 @@ export async function addStudent(payload: AddStudentPayload): Promise<{ message:
   return request('addStudent', { method: 'POST', auth: true, body: payload });
 }
 
+// --- Staff administration endpoints ---
+
+export async function adminRegister(
+  payload: RegisterStaffPayload,
+): Promise<{ message: string; userId: number }> {
+  return request('admin/register', { method: 'POST', body: payload });
+}
+
+export async function getDistricts(): Promise<{ districts: District[] }> {
+  return request('hierarchy/districts', { method: 'GET', auth: true });
+}
+
+export async function updateAttendance(
+  entries: AttendanceEntry[],
+  meta: { grade_level: number },
+): Promise<{ message: string; updated: number }> {
+  // meta.grade_level is forwarded on every entry so the backend's write-through
+  // cache can invalidate `portal:<ssn>:<grade_level>` (mirrors updateGrades).
+  return request('attendance/update', {
+    method: 'POST',
+    auth: true,
+    body: entries.map((e) => ({ ...e, grade_level: meta.grade_level })),
+  });
+}
+
+export async function assignTeacherClass(
+  payload: { teacher_id: number; grade_level: number; class_name: string; subject_name: string },
+): Promise<{ message: string; teacher_id: number; grade_level: number; class_name: string; subject_name: string }> {
+  return request('admin/teacher-classes', { method: 'POST', auth: true, body: payload });
+}
+
+export async function listTeacherClasses(
+  teacherId?: number,
+): Promise<{ assignments: TeacherClassAssignment[] }> {
+  const qs = teacherId ? `?teacher_id=${teacherId}` : '';
+  return request(`staff/teacher-classes${qs}`, { method: 'GET', auth: true });
+}
+
+export async function addTeacherStaff(
+  payload: AddTeacherPayload,
+): Promise<{ message: string; teacherId: number }> {
+  return request('admin/add-teacher', { method: 'POST', auth: true, body: payload });
+}
+
+export async function getPendingTeachers(): Promise<{ pending: TeacherAccount[] }> {
+  return request('teacher/pending', { method: 'GET', auth: true });
+}
+
+export async function verifyTeacher(
+  id: string,
+): Promise<{ message: string; id: string }> {
+  return request(`teacher/verify/${encodeURIComponent(id)}`, { method: 'PATCH', auth: true });
+}
+
 export async function logAction(payload: {
   ssn_encrypted: string;
   grade_level: number;
   action_type: number;
 }): Promise<{ message: string; total_inserted: number }> {
-  return request('logAction', { method: 'POST', body: payload });
+  // v5 — /logAction is now JWT-gated. Students send their own JWT (auth:'student').
+  return request('logAction', { method: 'POST', auth: 'student', body: payload });
 }
 
 // --- Student portal (full dashboard data) ---
@@ -235,8 +331,15 @@ export async function getStudentPortal(
   ssn_encrypted: string,
   grade_level: number,
 ): Promise<PortalData> {
-  const qs = `?ssn_encrypted=${encodeURIComponent(ssn_encrypted)}&grade_level=${grade_level}`;
-  return request(`student/portal${qs}`, { method: 'GET' });
+  // v5 — the portal endpoint is now POST + JWT-gated (SSN out of URL/logs). For
+  // student JWT callers the backend IGNORES the body and uses the JWT's ssn+grade
+  // (anti-impersonation); the args here are kept for signature stability and for
+  // the staff/teacher cross-check path (when wired).
+  return request('student/portal', {
+    method: 'POST',
+    auth: 'student',
+    body: { ssn_encrypted, grade_level },
+  });
 }
 
 // --- Teacher account (email self-registration → admin approval → JWT) ---

@@ -3,10 +3,11 @@ import { Logo } from './Logo';
 interface HeroProps {
   onStudent: () => void;
   onTeacher: () => void;
+  onStaff: () => void;
   theme: 'dark' | 'light';
 }
 
-export function Hero({ onStudent, onTeacher, theme }: HeroProps) {
+export function Hero({ onStudent, onTeacher, onStaff, theme }: HeroProps) {
   return (
     <div className="flex min-h-[80vh] flex-col items-center justify-center py-12 text-center">
       {/* ── Logo centerpiece: glowing crest with rotating halo rings ── */}
@@ -67,6 +68,13 @@ export function Hero({ onStudent, onTeacher, theme }: HeroProps) {
           className="group inline-flex items-center justify-center gap-3 rounded-2xl border border-gold-500/25 bg-white/[0.03] px-10 py-4.5 text-base font-bold text-gold-200 transition hover:bg-gold-500/10"
         >
           <span>بوابة المعلّمين</span>
+          <span className="text-lg transition-transform duration-300 group-hover:-translate-x-1.5">←</span>
+        </button>
+        <button
+          onClick={onStaff}
+          className="group inline-flex items-center justify-center gap-3 rounded-2xl border border-gold-500/25 bg-white/[0.03] px-10 py-4.5 text-base font-bold text-gold-200 transition hover:bg-gold-500/10"
+        >
+          <span>بوابة الإدارة</span>
           <span className="text-lg transition-transform duration-300 group-hover:-translate-x-1.5">←</span>
         </button>
       </div>

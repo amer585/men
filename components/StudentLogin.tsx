@@ -4,7 +4,7 @@ import { GRADE_LABELS } from '../schoolData';
 import { Logo } from './Logo';
 
 interface Props {
-  onSuccess: (profile: StudentProfile) => void;
+  onSuccess: (profile: StudentProfile, token?: string) => void;
   onBack: () => void;
 }
 
@@ -23,13 +23,17 @@ export function StudentLogin({ onSuccess, onBack }: Props) {
     }
     setLoading(true);
     try {
-      const { student } = await studentLogin(ssn, Number(grade));
+      const { student, token } = await studentLogin(ssn, Number(grade));
+      // Call onSuccess FIRST so App.onStudentLogin synchronously writes the token
+      // via setStudentToken — logAction below uses auth:'student' which calls
+      // getStudentToken() synchronously at invoke time (the JWT must already be
+      // in localStorage before the fetch fires).
+      onSuccess(student, token);
       void logAction({
         ssn_encrypted: student.ssn_encrypted,
         grade_level: student.grade_level,
         action_type: ACTION_TYPES.LOGIN,
       }).catch(() => {});
-      onSuccess(student);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'تعذّر تسجيل الدخول.');
     } finally {

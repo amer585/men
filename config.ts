@@ -15,12 +15,17 @@ const BACKEND_ORIGIN = 'https://amer585-intlaqa-backend.hf.space';
 const configured = (import.meta as any).env.VITE_API_BASE_URL?.trim();
 
 function resolveApiBaseUrl(): string {
-  // 1. Explicit override wins.
+  // 1. Explicit override wins (e.g. local dev via .env.local).
   if (configured && configured.length > 0) {
     return configured.replace(/\/$/, '');
   }
-  // 2. Default to same-origin relative path for full-stack integration
-  return '/api';
+  // 2. Same-origin (frontend served BY the backend, e.g. HF Space full-stack) → relative path.
+  if (typeof window !== 'undefined' && window.location && window.location.origin === BACKEND_ORIGIN) {
+    return '/api';
+  }
+  // 3. Cross-origin (frontend hosted elsewhere — Cloudflare/Vercel/Netlify) → absolute URL.
+  //    Without this, fetch hits the static host and 405s.
+  return `${BACKEND_ORIGIN}/api`;
 }
 
 export const API_BASE_URL = resolveApiBaseUrl();
@@ -72,6 +77,34 @@ export function setTeacherToken(token: string): void {
 export function clearTeacherToken(): void {
   try {
     localStorage.removeItem(TEACHER_TOKEN_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+// --- Student session token (issued by POST /api/studentLogin; sent as Bearer
+// on POST /api/student/portal + /api/logAction, both JWT-gated as of v5) ---
+const STUDENT_TOKEN_KEY = 'intlaqa_student_token';
+
+export function getStudentToken(): string | null {
+  try {
+    return localStorage.getItem(STUDENT_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setStudentToken(token: string): void {
+  try {
+    localStorage.setItem(STUDENT_TOKEN_KEY, token);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function clearStudentToken(): void {
+  try {
+    localStorage.removeItem(STUDENT_TOKEN_KEY);
   } catch {
     /* ignore */
   }

@@ -7,8 +7,11 @@ import { StudentDashboard } from './components/StudentDashboard';
 import { TeacherLogin } from './components/TeacherLogin';
 import { TeacherRegister } from './components/TeacherRegister';
 import { TeacherDashboard } from './components/TeacherDashboard';
-import type { StudentProfile, TeacherAccount } from './apiService';
-import { clearTeacherToken } from './config';
+import { StaffLogin } from './components/StaffLogin';
+import { AdminRegister } from './components/AdminRegister';
+import { StaffDashboard } from './components/StaffDashboard';
+import type { StudentProfile, TeacherAccount, StaffUser } from './apiService';
+import { clearTeacherToken, clearStaffToken, setStudentToken, clearStudentToken } from './config';
 
 type View =
   | 'landing'
@@ -16,11 +19,15 @@ type View =
   | 'student'
   | 'teacher-login'
   | 'teacher-register'
-  | 'teacher';
+  | 'teacher'
+  | 'staff-login'
+  | 'staff'
+  | 'admin-register';
 type Theme = 'dark' | 'light';
 
 const STORAGE_KEY = 'intlaqa_student';
 const TEACHER_STORAGE_KEY = 'intlaqa_teacher_account';
+const STAFF_STORAGE_KEY = 'intlaqa_staff_user';
 const THEME_KEY = 'intlaqa_theme';
 
 /** Load a saved student session so a page reload never kicks the user out. */
@@ -43,6 +50,19 @@ function loadSavedTeacher(): TeacherAccount | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (parsed && parsed.id && parsed.email) return parsed as TeacherAccount;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Load a saved staff session so a page reload keeps the staff member logged in. */
+function loadSavedStaff(): StaffUser | null {
+  try {
+    const raw = localStorage.getItem(STAFF_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.role) return parsed as StaffUser;
     return null;
   } catch {
     return null;
@@ -229,10 +249,12 @@ export default function App() {
   // Start from localStorage so reload keeps the user in the dashboard.
   const savedStudent = loadSavedStudent();
   const savedTeacher = loadSavedTeacher();
+  const savedStaff = loadSavedStaff();
   const [student, setStudent] = useState<StudentProfile | null>(savedStudent);
   const [teacher, setTeacher] = useState<TeacherAccount | null>(savedTeacher);
+  const [staff, setStaff] = useState<StaffUser | null>(savedStaff);
   const [view, setView] = useState<View>(
-    savedStudent ? 'student' : savedTeacher ? 'teacher' : 'landing',
+    savedStudent ? 'student' : savedTeacher ? 'teacher' : savedStaff ? 'staff' : 'landing',
   );
   const [theme, setTheme] = useState<Theme>(() => {
     try {
@@ -258,12 +280,13 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [view]);
 
-  function onStudentLogin(profile: StudentProfile) {
+  function onStudentLogin(profile: StudentProfile, token?: string) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
     } catch {
       /* ignore */
     }
+    if (token) setStudentToken(token);
     setStudent(profile);
     setView('student');
   }
@@ -274,6 +297,7 @@ export default function App() {
     } catch {
       /* ignore */
     }
+    clearStudentToken();
     setStudent(null);
     setView('landing');
   }
@@ -299,6 +323,27 @@ export default function App() {
     setView('landing');
   }
 
+  function onStaffLogin(user: StaffUser) {
+    try {
+      localStorage.setItem(STAFF_STORAGE_KEY, JSON.stringify(user));
+    } catch {
+      /* ignore */
+    }
+    setStaff(user);
+    setView('staff');
+  }
+
+  function staffLogout() {
+    try {
+      localStorage.removeItem(STAFF_STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+    clearStaffToken();
+    setStaff(null);
+    setView('landing');
+  }
+
   let body: ReactNode;
   if (view === 'student-login') {
     body = <StudentLogin onSuccess={onStudentLogin} onBack={() => setView('landing')} />;
@@ -321,11 +366,29 @@ export default function App() {
     );
   } else if (view === 'teacher' && teacher) {
     body = <TeacherDashboard account={teacher} onLogout={teacherLogout} />;
+  } else if (view === 'staff-login') {
+    body = (
+      <StaffLogin
+        onSuccess={onStaffLogin}
+        onBack={() => setView('landing')}
+        onRegister={() => setView('admin-register')}
+      />
+    );
+  } else if (view === 'admin-register') {
+    body = (
+      <AdminRegister
+        onBack={() => setView('landing')}
+        onGoLogin={() => setView('staff-login')}
+      />
+    );
+  } else if (view === 'staff' && staff) {
+    body = <StaffDashboard user={staff} onLogout={staffLogout} />;
   } else {
     body = (
       <Hero
         onStudent={() => setView('student-login')}
         onTeacher={() => setView('teacher-login')}
+        onStaff={() => setView('staff-login')}
         theme={theme}
       />
     );
@@ -340,10 +403,10 @@ export default function App() {
           theme={theme}
           onToggleTheme={toggleTheme}
           onHome={() =>
-            student ? setView('student') : teacher ? setView('teacher') : setView('landing')
+            student ? setView('student') : teacher ? setView('teacher') : staff ? setView('staff') : setView('landing')
           }
-          onLogout={view === 'teacher' ? teacherLogout : logout}
-          identity={student?.student_name_ar ?? teacher?.name}
+          onLogout={view === 'teacher' ? teacherLogout : view === 'staff' ? staffLogout : logout}
+          identity={student?.student_name_ar ?? teacher?.name ?? staff?.teacher_name_ar ?? staff?.name}
         />
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-6 md:py-12">{body}</main>
         <Footer />
