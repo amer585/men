@@ -106,7 +106,7 @@ export const ACTION_TYPES = {
 
 // --- Generic request helper ---
 
-class ApiError extends Error {
+export class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
   }
@@ -379,6 +379,27 @@ export async function teacherLogin(
   password: string,
 ): Promise<{ success: boolean; token: string; account: TeacherAccount }> {
   return request('teacher/login', { method: 'POST', body: { email, password } });
+}
+
+export interface TeacherVerificationStatus {
+  id: string;
+  name: string;
+  is_verified: boolean;
+  status: 'pending' | 'approved';
+  message: string;
+}
+
+/**
+ * Poll the approval state of a registered teacher account. A pending teacher
+ * cannot log in (the backend blocks with 403 BEFORE issuing a JWT), so this
+ * credential-authenticated endpoint (email + password, no token) is the only
+ * way to check whether the admin has approved the account yet.
+ */
+export async function checkTeacherVerification(
+  email: string,
+  password: string,
+): Promise<TeacherVerificationStatus> {
+  return request('teacher/verification-status', { method: 'POST', body: { email, password } });
 }
 
 export async function getTeacherProfile(): Promise<TeacherAccount> {

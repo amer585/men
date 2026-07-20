@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { teacherRegister } from '../apiService';
+import { teacherRegister, checkTeacherVerification } from '../apiService';
 import { Logo } from './Logo';
 
 interface Props {
@@ -26,6 +26,26 @@ export function TeacherRegister({ onBack, onGoLogin }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [statusNote, setStatusNote] = useState<string | null>(null);
+
+  /** Poll the approval state (credentials are still in component state). */
+  async function pollStatus() {
+    setChecking(true);
+    setStatusNote(null);
+    try {
+      const res = await checkTeacherVerification(email.trim(), password);
+      setStatusNote(
+        res.is_verified
+          ? '✅ تم تفعيل حسابك من الإدارة! يمكنك تسجيل الدخول الآن.'
+          : '⏳ حسابك ما زال قيد المراجعة — حاول مرة أخرى لاحقًا.',
+      );
+    } catch (err) {
+      setStatusNote(err instanceof Error ? err.message : 'تعذّر التحقق من الحالة.');
+    } finally {
+      setChecking(false);
+    }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -81,6 +101,18 @@ export function TeacherRegister({ onBack, onGoLogin }: Props) {
               </p>
               <p className="mt-2 text-xs text-emerald-300/70">ستتمكن من تسجيل الدخول بعد تفعيل حسابك.</p>
             </div>
+            {statusNote && (
+              <div className="rounded-xl border border-gold-500/15 bg-white/[0.03] px-4 py-3 text-sm text-slate-200">
+                {statusNote}
+              </div>
+            )}
+            <button
+              onClick={pollStatus}
+              disabled={checking}
+              className="w-full rounded-2xl border border-gold-500/20 bg-white/[0.04] py-3 text-sm font-bold text-gold-300 transition hover:bg-white/[0.07] disabled:opacity-50"
+            >
+              {checking ? 'جارٍ التحقق…' : 'التحقق من حالة التفعيل'}
+            </button>
             <button onClick={onGoLogin} className="btn-gold w-full rounded-2xl py-3.5 text-base font-bold">
               الذهاب لتسجيل الدخول
             </button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { teacherLogin, type TeacherAccount } from '../apiService';
+import { ApiError, teacherLogin, checkTeacherVerification, type TeacherAccount } from '../apiService';
 import { setTeacherToken } from '../config';
 import { Logo } from './Logo';
 
@@ -14,19 +14,51 @@ export function TeacherLogin({ onSuccess, onBack, onRegister }: Props) {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Set when the backend rejects the login with 403 PENDING_APPROVAL — the
+  // account exists and the password is right, but the admin hasn't approved
+  // it yet, so no JWT is issued. From here the teacher can poll their status.
+  const [pending, setPending] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [statusNote, setStatusNote] = useState<string | null>(null);
+  const [approved, setApproved] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setStatusNote(null);
     setLoading(true);
     try {
       const { token, account } = await teacherLogin(email.trim(), password);
       setTeacherToken(token);
       onSuccess(account);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'تعذّر تسجيل الدخول.');
+      if (err instanceof ApiError && err.status === 403) {
+        // Pending admin approval — swap the form for the status panel.
+        setPending(true);
+        setApproved(false);
+      } else {
+        setError(err instanceof Error ? err.message : 'تعذّر تسجيل الدخول.');
+      }
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function pollStatus() {
+    setChecking(true);
+    setStatusNote(null);
+    try {
+      const res = await checkTeacherVerification(email.trim(), password);
+      if (res.is_verified) {
+        setApproved(true);
+        setStatusNote('تم تفعيل حسابك من الإدارة! يمكنك تسجيل الدخول الآن.');
+      } else {
+        setStatusNote('حسابك ما زال قيد المراجعة — حاول مرة أخرى لاحقًا.');
+      }
+    } catch (err) {
+      setStatusNote(err instanceof Error ? err.message : 'تعذّر التحقق من الحالة.');
+    } finally {
+      setChecking(false);
     }
   }
 
@@ -51,51 +83,93 @@ export function TeacherLogin({ onSuccess, onBack, onRegister }: Props) {
           <p className="mt-2 text-sm text-slate-400">سجّل دخولك بحساب المعلّم للمتابعة</p>
         </div>
 
-        <form onSubmit={submit} className="space-y-5">
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-slate-300">البريد الإلكتروني</span>
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              dir="ltr"
-              placeholder="teacher@example.com"
-              className="w-full rounded-xl border border-gold-500/10 bg-ink-900/60 px-4 py-3 text-white placeholder:text-slate-600 focus:border-gold-400/40 focus:outline-none focus:ring-2 focus:ring-gold-500/15"
-            />
-          </label>
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-slate-300">كلمة المرور</span>
-            <input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              dir="ltr"
-              placeholder="••••••••"
-              className="w-full rounded-xl border border-gold-500/10 bg-ink-900/60 px-4 py-3 text-white placeholder:text-slate-600 focus:border-gold-400/40 focus:outline-none focus:ring-2 focus:ring-gold-500/15"
-            />
-          </label>
-
-          {error && (
-            <div className="rounded-xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
-              {error}
+        {pending && !approved ? (
+          /* ── Pending-approval panel (403 PENDING_APPROVAL from the backend) ── */
+          <div className="space-y-5 text-center">
+            <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 px-5 py-6">
+              <div className="mb-2 text-3xl">⏳</div>
+              <p className="text-sm font-semibold text-amber-200">
+                بياناتك صحيحة، لكن حسابك ما زال بانتظار موافقة الإدارة.
+              </p>
+              <p className="mt-2 text-xs text-amber-300/70">
+                ستتمكن من الدخول فور تفعيل حسابك. يمكنك التحقق من الحالة الآن.
+              </p>
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-gold w-full rounded-2xl py-4 text-base font-bold disabled:opacity-50"
-          >
-            {loading ? 'جارٍ التحقق…' : 'تسجيل الدخول ←'}
-          </button>
-        </form>
+            {statusNote && (
+              <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+                {statusNote}
+              </div>
+            )}
 
-        <p className="mt-6 text-center text-sm text-slate-400">
-          ليس لديك حساب؟{' '}
-          <button onClick={onRegister} className="font-semibold text-gold-400 hover:text-gold-300">
-            أنشئ حساب معلّم جديد
-          </button>
-        </p>
+            <button
+              onClick={pollStatus}
+              disabled={checking}
+              className="btn-gold w-full rounded-2xl py-3.5 text-base font-bold disabled:opacity-50"
+            >
+              {checking ? 'جارٍ التحقق…' : 'التحقق من حالة التفعيل'}
+            </button>
+            <button
+              onClick={() => { setPending(false); setStatusNote(null); }}
+              className="w-full rounded-2xl border border-gold-500/15 bg-white/[0.03] py-3 text-sm font-medium text-slate-300 transition hover:bg-white/[0.06]"
+            >
+              العودة لتسجيل الدخول
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={submit} className="space-y-5">
+            {approved && (
+              <div className="rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-200">
+                ✅ تم تفعيل حسابك — سجّل الدخول الآن.
+              </div>
+            )}
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium text-slate-300">البريد الإلكتروني</span>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                dir="ltr"
+                placeholder="teacher@example.com"
+                className="w-full rounded-xl border border-gold-500/10 bg-ink-900/60 px-4 py-3 text-white placeholder:text-slate-600 focus:border-gold-400/40 focus:outline-none focus:ring-2 focus:ring-gold-500/15"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium text-slate-300">كلمة المرور</span>
+              <input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                dir="ltr"
+                placeholder="••••••••"
+                className="w-full rounded-xl border border-gold-500/10 bg-ink-900/60 px-4 py-3 text-white placeholder:text-slate-600 focus:border-gold-400/40 focus:outline-none focus:ring-2 focus:ring-gold-500/15"
+              />
+            </label>
+
+            {error && (
+              <div className="rounded-xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
+                {error}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-gold w-full rounded-2xl py-4 text-base font-bold disabled:opacity-50"
+            >
+              {loading ? 'جارٍ التحقق…' : 'تسجيل الدخول ←'}
+            </button>
+          </form>
+        )}
+
+        {(!pending || approved) && (
+          <p className="mt-6 text-center text-sm text-slate-400">
+            ليس لديك حساب؟{' '}
+            <button onClick={onRegister} className="font-semibold text-gold-400 hover:text-gold-300">
+              أنشئ حساب معلّم جديد
+            </button>
+          </p>
+        )}
       </div>
     </div>
   );
