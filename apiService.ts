@@ -114,7 +114,7 @@ class ApiError extends Error {
 
 async function request<T>(
   endpoint: string,
-  options: { method: 'GET' | 'POST' | 'PATCH'; body?: unknown; auth?: boolean | 'staff' | 'teacher' | 'student' } = { method: 'GET' },
+  options: { method: 'GET' | 'POST' | 'PATCH' | 'DELETE'; body?: unknown; auth?: boolean | 'staff' | 'teacher' | 'student' } = { method: 'GET' },
 ): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (options.auth === 'teacher') {
@@ -393,10 +393,16 @@ export async function updateTeacherProfile(payload: {
   return request('teacher/profile', { method: 'PATCH', auth: 'teacher', body: payload });
 }
 
-export async function getTeacherStudents(): Promise<{ teacher_id: string; students: LinkedStudent[] }> {
+export async function getTeacherStudents(): Promise<{ teacher_id: string; students: LinkedStudent[]; cached?: boolean }> {
   return request('teacher/students', { method: 'GET', auth: 'teacher' });
 }
 
 export async function linkStudent(student_id: string): Promise<{ message: string; teacher_id: string; student_id: string }> {
   return request('teacher/students', { method: 'POST', auth: 'teacher', body: { student_id } });
+}
+
+export async function unlinkStudent(student_id: string): Promise<{ message: string; teacher_id: string; student_id: string }> {
+  // Removes only the relation (teacher DB) — the student record itself stays
+  // in the student DB. The backend busts the cached roster on this write.
+  return request(`teacher/students/${encodeURIComponent(student_id)}`, { method: 'DELETE', auth: 'teacher' });
 }

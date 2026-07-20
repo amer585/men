@@ -3,6 +3,7 @@ import {
   getTeacherProfile,
   getTeacherStudents,
   linkStudent,
+  unlinkStudent,
   updateTeacherProfile,
   type TeacherAccount,
   type LinkedStudent,
@@ -24,6 +25,7 @@ export function TeacherDashboard({ account: initial, onLogout }: Props) {
   const [newSsn, setNewSsn] = useState('');
   const [linkBusy, setLinkBusy] = useState(false);
   const [linkMsg, setLinkMsg] = useState<string | null>(null);
+  const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
 
   const [editing, setEditing] = useState(false);
   const [eName, setEName] = useState(initial.name);
@@ -75,6 +77,21 @@ export function TeacherDashboard({ account: initial, onLogout }: Props) {
       setLinkMsg(err instanceof Error ? err.message : 'تعذّر ربط الطالب.');
     } finally {
       setLinkBusy(false);
+    }
+  }
+
+  async function unlink(s: LinkedStudent) {
+    setLinkMsg(null);
+    setUnlinkingId(s.student_id);
+    try {
+      await unlinkStudent(s.student_id);
+      // Optimistic local removal — the backend already busted the roster cache.
+      setStudents((prev) => prev.filter((x) => x.student_id !== s.student_id));
+      setLinkMsg('تم إلغاء ربط الطالب.');
+    } catch (err) {
+      setLinkMsg(err instanceof Error ? err.message : 'تعذّر إلغاء الربط.');
+    } finally {
+      setUnlinkingId(null);
     }
   }
 
@@ -220,7 +237,8 @@ export function TeacherDashboard({ account: initial, onLogout }: Props) {
                     <th className="pb-2 pr-2 font-medium">الاسم</th>
                     <th className="pb-2 font-medium">الصف</th>
                     <th className="pb-2 font-medium">الفصل</th>
-                    <th className="pb-2 pl-2 font-medium">المدرسة</th>
+                    <th className="pb-2 font-medium">المدرسة</th>
+                    <th className="pb-2 pl-2 font-medium"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -229,7 +247,17 @@ export function TeacherDashboard({ account: initial, onLogout }: Props) {
                       <td className="py-2.5 pr-2 text-slate-200">{s.student_name_ar || '—'}</td>
                       <td className="py-2.5 text-slate-300">{gradeLabel(s.grade_level)}</td>
                       <td className="py-2.5 text-slate-300">{s.class_name || '—'}</td>
-                      <td className="py-2.5 pl-2 text-slate-300">{s.school_name || '—'}</td>
+                      <td className="py-2.5 text-slate-300">{s.school_name || '—'}</td>
+                      <td className="py-2.5 pl-2 text-left">
+                        <button
+                          onClick={() => unlink(s)}
+                          disabled={unlinkingId === s.student_id}
+                          title="إلغاء الربط (يبقى الطالب محفوظًا في قاعدة بيانات الطلاب)"
+                          className="rounded-lg border border-rose-400/15 bg-rose-500/5 px-3 py-1.5 text-xs font-semibold text-rose-300/90 transition hover:bg-rose-500/15 disabled:opacity-50"
+                        >
+                          {unlinkingId === s.student_id ? 'جارٍ الإلغاء…' : 'إلغاء الربط'}
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
